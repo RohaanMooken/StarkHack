@@ -30,7 +30,11 @@ export const data = [
 export const columns = [
 	columnHelper.accessor("name", {
 		accessorKey: "name",
-		header: "Name",
+		header: () => <div className="text-center uppercase">name</div>,
+        cell: ({ row }) => {
+            const value = row.getValue("name");
+            return <div className="text-center">{value}</div>;
+        }
 	}),
 	columnHelper.accessor("vault_tvl", {
 		accessorKey: "vault_tvl",
@@ -80,7 +84,11 @@ export const columns = [
 	// convert to nice datetime format
 	columnHelper.accessor("last_updated", {
 		accessorKey: "last_updated",
-		header: "Last Updated",
+		header: () => <div className="text-center uppercase">last updated</div>,
+        cell: ({ row }) => {
+            const value = row.getValue("last_updated");
+            return <div className="text-center">{value}</div>;
+        }
 	}),
 	{
 		id: "actions",
