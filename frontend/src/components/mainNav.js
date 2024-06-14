@@ -1,8 +1,9 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { siteConfig } from "@/config/site";
 
 export function MainNav() {
 	const pathName = usePathname();
@@ -12,7 +13,7 @@ export function MainNav() {
 			<Link href="/" className="mr-6 flex items-center space-x-2">
 				{/* Add Icon here if needed/wanted */}
 				<span className="hidden font-bold sm:inline-block">
-					SiteName
+					{siteConfig.name}
 				</span>
 			</Link>
 			<nav className="flex items-center gap-4 text-sm lg:gap-6">
