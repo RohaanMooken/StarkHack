@@ -9,7 +9,7 @@ const columnHelper = createColumnHelper();
 
 export const data = [
 	{
-		id: 1,
+		id: 0,
 		name: "SSV Network",
 		vault_tvl: 2400000,
 		max_bounty: 1000000,
@@ -17,7 +17,7 @@ export const data = [
 		last_updated: "08/04/2024",
 	},
 	{
-		id: 2,
+		id: 1,
 		name: "Beanstalk",
 		vault_tvl: 2200000,
 		max_bounty: 1100000,
