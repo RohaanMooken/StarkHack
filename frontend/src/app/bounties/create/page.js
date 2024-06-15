@@ -1,4 +1,5 @@
 import { Editor } from "@/components/editor";
+import { Separator } from "@/components/ui/separator";
 
 export default function CreateBountyPage() {
 	return (
@@ -8,18 +9,22 @@ export default function CreateBountyPage() {
 				Please fill out the fields below accordingly to fit your
 				requirements.
 			</p>
+            <Separator className="my-4 w-7/12"/>
 			<div className="flex flex-col items-center w-full">
 				<h3>Program Overview</h3>
 				<Editor />
 			</div>
+            <Separator className="my-4 w-7/12"/>
 			<div className="flex flex-col items-center w-full">
 				<h3>Rewards by Threat Level</h3>
 				<Editor />
 			</div>
+            <Separator className="my-4 w-7/12"/>
 			<div className="flex flex-col items-center w-full">
 				<h3>Impacts in Scope</h3>
 				<Editor />
 			</div>
+            <Separator className="my-4 w-7/12"/>
 			<div className="flex flex-col items-center w-full">
 				<h3>Out of Scope & Rules</h3>
 				<Editor />
