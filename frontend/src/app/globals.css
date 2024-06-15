@@ -66,5 +66,13 @@
     h6 {
       @apply text-sm;
     }
+    ul {
+      @apply list-disc;
+      @apply ml-2;
+    }
+    ol {
+      @apply list-decimal;
+      @apply ml-2;
+    }
   }
   
