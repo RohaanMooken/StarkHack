@@ -11,7 +11,7 @@ export function Editor() {
 		],
         editorProps: {
             attributes: {
-                class: "border-white border-2 rounded-lg p-4",
+                class: "border-primary border-2 rounded-lg p-4",
             },
         },
 	});
