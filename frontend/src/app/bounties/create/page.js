@@ -1,4 +1,5 @@
 import { Editor } from "@/components/editor";
+import { ImpactsInScopeManager } from "@/components/impactsInScopeManager";
 import { RewardsByThreatLevelManager } from "@/components/rewardsByThreatLevelManager";
 import { Separator } from "@/components/ui/separator";
 
@@ -25,6 +26,7 @@ export default function CreateBountyPage() {
 			<div className="flex flex-col items-center w-full">
 				<h3>Impacts in Scope</h3>
 				<Editor />
+                <ImpactsInScopeManager />
 			</div>
             <Separator className="my-4 w-7/12"/>
 			<div className="flex flex-col items-center w-full">
