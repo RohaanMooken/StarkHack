@@ -15,7 +15,7 @@ export function Editor() {
             },
         },
 	});
-
+	
 	return (
 		<div className="w-6/12">
 			<EditorToggleBar editor={editor}/>

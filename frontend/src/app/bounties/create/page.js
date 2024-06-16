@@ -1,4 +1,5 @@
 import { Editor } from "@/components/editor";
+import { RewardsByThreatLevelManager } from "@/components/rewardsByThreatLevelManager";
 import { Separator } from "@/components/ui/separator";
 
 export default function CreateBountyPage() {
@@ -18,6 +19,7 @@ export default function CreateBountyPage() {
 			<div className="flex flex-col items-center w-full">
 				<h3>Rewards by Threat Level</h3>
 				<Editor />
+                <RewardsByThreatLevelManager />
 			</div>
             <Separator className="my-4 w-7/12"/>
 			<div className="flex flex-col items-center w-full">
