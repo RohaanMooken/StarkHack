@@ -29,7 +29,7 @@ export function RewardsByThreatLevelManager() {
 					</RadioGroup>
 					<Input
 						type="number"
-						placeholder="Threat Level Reward Amount"
+						placeholder="Critical Level Reward Amount"
 					></Input>
 				</div>
                 <div className="flex flex-row items-center justify-evenly w-6/12 space-x-8">
@@ -46,7 +46,7 @@ export function RewardsByThreatLevelManager() {
 					</RadioGroup>
 					<Input
 						type="number"
-						placeholder="Threat Level Reward Amount"
+						placeholder="High Level Reward Amount"
 					></Input>
 				</div>
                 <div className="flex flex-row items-center justify-evenly w-6/12 space-x-8">
@@ -63,7 +63,7 @@ export function RewardsByThreatLevelManager() {
 					</RadioGroup>
 					<Input
 						type="number"
-						placeholder="Threat Level Reward Amount"
+						placeholder="Medium Level Reward Amount"
 					></Input>
 				</div>
                 <div className="flex flex-row items-center justify-evenly w-6/12 space-x-8">
@@ -80,7 +80,7 @@ export function RewardsByThreatLevelManager() {
 					</RadioGroup>
 					<Input
 						type="number"
-						placeholder="Threat Level Reward Amount"
+						placeholder="Low Level Reward Amount"
 					></Input>
 				</div>
 			</CardContent>
