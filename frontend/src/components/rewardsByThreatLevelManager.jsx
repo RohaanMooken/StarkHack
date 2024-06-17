@@ -6,7 +6,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "./ui/input";
 
-export function RewardsByThreatLevelManager() {
+export function RewardsByThreatLevelManager({
+	setCriticalReward,
+	setHighReward,
+	setMediumReward,
+	setLowReward,
+}) {
 	const [critical, setCritical] = useState("single");
 	const [high, setHigh] = useState("single");
 	const [medium, setMedium] = useState("single");
@@ -20,6 +25,62 @@ export function RewardsByThreatLevelManager() {
 	const [mediumEnd, setMediumEnd] = useState(0);
 	const [lowStart, setLowStart] = useState(0);
 	const [lowEnd, setLowEnd] = useState(0);
+
+	function handleCriticalChange(param, value) {
+		if (param === "start") {
+			setCriticalStart(value);
+		} else {
+			setCriticalEnd(value);
+		}
+
+		if (critical === "range") {
+			setCriticalReward([criticalStart, criticalEnd]);
+		} else {
+			setCriticalReward([criticalStart]);
+		}
+	}
+
+	function handleHighChange(param, value) {
+		if (param === "start") {
+			setHighStart(value);
+		} else {
+			setHighEnd(value);
+		}
+
+		if (high === "range") {
+			setHighReward([highStart, highEnd]);
+		} else {
+			setHighReward([highStart]);
+		}
+	}
+
+	function handleMediumChange(param, value) {
+		if (param === "start") {
+			setMediumStart(value);
+		} else {
+			setMediumEnd(value);
+		}
+
+		if (medium === "range") {
+			setMediumReward([mediumStart, mediumEnd]);
+		} else {
+			setMediumReward([mediumStart]);
+		}
+	}
+
+	function handleLowChange(param, value) {
+		if (param === "start") {
+			setLowStart(value);
+		} else {
+			setLowEnd(value);
+		}
+
+		if (low === "range") {
+			setLowReward([lowStart, lowEnd]);
+		} else {
+			setLowReward([lowStart]);
+		}
+	}
 
 	return (
 		<Card className="w-6/12 p-2">
@@ -47,14 +108,19 @@ export function RewardsByThreatLevelManager() {
 								placeholder="Start"
 								value={criticalStart}
 								onChange={(e) =>
-									setCriticalStart(e.target.value)
+									handleCriticalChange(
+										"start",
+										e.target.value
+									)
 								}
 							/>
 							<Input
 								type="number"
 								placeholder="End"
 								value={criticalEnd}
-								onChange={(e) => setCriticalEnd(e.target.value)}
+								onChange={(e) =>
+									handleCriticalChange("end", e.target.value)
+								}
 							/>
 						</div>
 					) : (
@@ -62,7 +128,9 @@ export function RewardsByThreatLevelManager() {
 							type="number"
 							placeholder="Critical Level Reward Amount"
 							value={criticalStart}
-							onChange={(e) => setCriticalStart(e.target.value)}
+							onChange={(e) =>
+								handleCriticalChange("start", e.target.value)
+							}
 						/>
 					)}
 				</div>
@@ -88,13 +156,17 @@ export function RewardsByThreatLevelManager() {
 								type="number"
 								placeholder="Start"
 								value={highStart}
-								onChange={(e) => setHighStart(e.target.value)}
+								onChange={(e) =>
+									handleHighChange("start", e.target.value)
+								}
 							/>
 							<Input
 								type="number"
 								placeholder="End"
 								value={highEnd}
-								onChange={(e) => setHighEnd(e.target.value)}
+								onChange={(e) =>
+									handleHighChange("end", e.target.value)
+								}
 							/>
 						</div>
 					) : (
@@ -102,7 +174,9 @@ export function RewardsByThreatLevelManager() {
 							type="number"
 							placeholder="High Level Reward Amount"
 							value={highStart}
-							onChange={(e) => setHighStart(e.target.value)}
+							onChange={(e) =>
+								handleHighChange("start", e.target.value)
+							}
 						/>
 					)}
 				</div>
@@ -128,13 +202,17 @@ export function RewardsByThreatLevelManager() {
 								type="number"
 								placeholder="Start"
 								value={mediumStart}
-								onChange={(e) => setMediumStart(e.target.value)}
+								onChange={(e) =>
+									handleMediumChange("start", e.target.value)
+								}
 							/>
 							<Input
 								type="number"
 								placeholder="End"
 								value={mediumEnd}
-								onChange={(e) => setMediumEnd(e.target.value)}
+								onChange={(e) =>
+									handleMediumChange("end", e.target.value)
+								}
 							/>
 						</div>
 					) : (
@@ -142,7 +220,9 @@ export function RewardsByThreatLevelManager() {
 							type="number"
 							placeholder="Medium Level Reward Amount"
 							value={mediumStart}
-							onChange={(e) => setMediumStart(e.target.value)}
+							onChange={(e) =>
+								handleMediumChange("start", e.target.value)
+							}
 						/>
 					)}
 				</div>
@@ -168,13 +248,17 @@ export function RewardsByThreatLevelManager() {
 								type="number"
 								placeholder="Start"
 								value={lowStart}
-								onChange={(e) => setLowStart(e.target.value)}
+								onChange={(e) =>
+									handleLowChange("start", e.target.value)
+								}
 							/>
 							<Input
 								type="number"
 								placeholder="End"
 								value={lowEnd}
-								onChange={(e) => setLowEnd(e.target.value)}
+								onChange={(e) =>
+									handleLowChange("end", e.target.value)
+								}
 							/>
 						</div>
 					) : (
@@ -182,7 +266,9 @@ export function RewardsByThreatLevelManager() {
 							type="number"
 							placeholder="Low Level Reward Amount"
 							value={lowStart}
-							onChange={(e) => setLowStart(e.target.value)}
+							onChange={(e) =>
+								handleLowChange("start", e.target.value)
+							}
 						/>
 					)}
 				</div>

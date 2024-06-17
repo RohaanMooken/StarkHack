@@ -12,8 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
-export function ImpactsInScopeManager() {
-	const [impacts, setImpacts] = useState([]);
+export function ImpactsInScopeManager({ impacts, setImpacts }) {
+	// const [impacts, setImpacts] = useState([]);
 	const [threatLevel, setThreatLevel] = useState(null);
 	const [impactDescription, setImpactDescription] = useState("");
 
