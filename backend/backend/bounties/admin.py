@@ -3,20 +3,20 @@ from .models import Bounty, BountyRewardCategory, BountyReward, BountyAssetInSco
 
 class BountyRewardInline(admin.TabularInline):
     model = BountyReward
-    extra = 1
+    extra = 0
 
 class BountyRewardCategoryInline(admin.TabularInline):
     model = BountyRewardCategory
-    extra = 1
+    extra = 0
     inlines = [BountyRewardInline]
 
 class BountyAssetInScopeInline(admin.TabularInline):
     model = BountyAssetInScope
-    extra = 1
+    extra = 0
 
 class BountyImpactInScopeInline(admin.TabularInline):
     model = BountyImpactInScope
-    extra = 1
+    extra = 0
 
 class BountyAdmin(admin.ModelAdmin):
     exclude = ('last_updated',)
