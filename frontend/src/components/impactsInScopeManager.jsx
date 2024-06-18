@@ -48,7 +48,7 @@ export function ImpactsInScopeManager({ impacts, setImpacts }) {
 						value={impactDescription}
 						onChange={(e) => setImpactDescription(e.target.value)}
 					/>
-					<Button onClick={handleAddImpact}>Add</Button>
+					<Button type="button" onClick={handleAddImpact}>Add</Button>
 				</div>
 				<div className="flex flex-col items-center space-y-2 w-full">
 					{impacts.map((impact, index) => (

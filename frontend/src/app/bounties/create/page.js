@@ -6,8 +6,8 @@ import { RewardsByThreatLevelManager } from "@/components/rewardsByThreatLevelMa
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { siteConfig } from "@/config/site";
 import { AssetsInScopeManager } from "@/components/assetsInScopeManager";
+import { siteConfig } from "@/config/site";
 
 export default function CreateBountyPage() {
 	const [editor1Content, setEditor1Content] = useState("");
@@ -24,9 +24,11 @@ export default function CreateBountyPage() {
 	const [impacts, setImpacts] = useState([]);
 	const [assets, setAssets] = useState([]);
 
-	function handleSubmission(formData) {
-		// Submit the bounty to the server
-		fetch(`${siteConfig.backendURL}/bounties`, {
+	// Submit the bounty to the server
+	async function handleSubmit(e) {
+		e.preventDefault();
+
+		const res = await fetch(`${siteConfig.backendURL}/bounties`, {
 			method: "POST",
 			body: JSON.stringify({
 				overview: editor1Content,
@@ -43,15 +45,12 @@ export default function CreateBountyPage() {
 				impacts: { text: editor4Content, impacts: impacts },
 				outOfScope: editor5Content,
 			}),
-		})
-		.catch((error) => {
-			console.log(error);
-		});
+		}).catch((err) => console.error(err));
 	}
 
 	return (
 		<form
-			action={handleSubmission}
+			onSubmit={handleSubmit}
 			className="flex flex-col items-center space-y-8"
 		>
 			<h1>Create a Bounty</h1>

@@ -32,7 +32,7 @@ export function AssetsInScopeManager({ assets, setAssets }) {
 						value={type}
 						onChange={(e) => setType(e.target.value)}
 					/>
-					<Button onClick={handleAddAsset}>Add</Button>
+					<Button type="button" onClick={handleAddAsset}>Add</Button>
 				</div>
 				<div className="flex flex-col items-center space-y-2 w-full">
 					{assets.map((asset, index) => (
