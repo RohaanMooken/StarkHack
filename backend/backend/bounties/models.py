@@ -80,4 +80,4 @@ class BountyImpactInScope(models.Model):
     impact = models.TextField()
 
     def __str__(self):
-        return self.target + ' - ' + self.type
+        return self.impact
