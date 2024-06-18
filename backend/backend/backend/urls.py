@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from bounties.views import BountiesView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('bounties/', BountiesView.as_view(), name="BountiesView")
 ]
