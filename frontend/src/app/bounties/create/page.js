@@ -6,12 +6,15 @@ import { RewardsByThreatLevelManager } from "@/components/rewardsByThreatLevelMa
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { siteConfig } from "@/config/site";
+import { AssetsInScopeManager } from "@/components/assetsInScopeManager";
 
 export default function CreateBountyPage() {
 	const [editor1Content, setEditor1Content] = useState("");
 	const [editor2Content, setEditor2Content] = useState("");
 	const [editor3Content, setEditor3Content] = useState("");
 	const [editor4Content, setEditor4Content] = useState("");
+	const [editor5Content, setEditor5Content] = useState("");
 
 	const [criticalReward, setCriticalReward] = useState([]);
 	const [highReward, setHighReward] = useState([]);
@@ -19,9 +22,31 @@ export default function CreateBountyPage() {
 	const [lowReward, setLowReward] = useState([]);
 
 	const [impacts, setImpacts] = useState([]);
+	const [assets, setAssets] = useState([]);
 
 	function handleSubmission(formData) {
 		// Submit the bounty to the server
+		fetch(`${siteConfig.backendURL}/bounties`, {
+			method: "POST",
+			body: JSON.stringify({
+				overview: editor1Content,
+				rewards: {
+					text: editor2Content,
+					categories: {
+						critical: criticalReward,
+						high: highReward,
+						medium: mediumReward,
+						low: lowReward,
+					},
+				},
+				assets: { text: editor3Content, assets: assets },
+				impacts: { text: editor4Content, impacts: impacts },
+				outOfScope: editor5Content,
+			}),
+		})
+		.catch((error) => {
+			console.log(error);
+		});
 	}
 
 	return (
@@ -52,14 +77,23 @@ export default function CreateBountyPage() {
 			</div>
 			<Separator className="my-4 w-7/12" />
 			<div className="flex flex-col items-center w-full">
-				<h3>Impacts in Scope</h3>
+				<h3>Assets in Scope</h3>
+				<AssetsInScopeManager assets={assets} setAssets={setAssets} />
 				<Editor setEditorContent={setEditor3Content} />
-				<ImpactsInScopeManager impacts={impacts} setImpacts={setImpacts}/>
+			</div>
+			<Separator className="my-4 w-7/12" />
+			<div className="flex flex-col items-center w-full">
+				<h3>Impacts in Scope</h3>
+				<ImpactsInScopeManager
+					impacts={impacts}
+					setImpacts={setImpacts}
+				/>
+				<Editor setEditorContent={setEditor4Content} />
 			</div>
 			<Separator className="my-4 w-7/12" />
 			<div className="flex flex-col items-center w-full">
 				<h3>Out of Scope & Rules</h3>
-				<Editor setEditorContent={setEditor4Content} />
+				<Editor setEditorContent={setEditor5Content} />
 			</div>
 			<Button type="submit">Submit Bounty</Button>
 		</form>
