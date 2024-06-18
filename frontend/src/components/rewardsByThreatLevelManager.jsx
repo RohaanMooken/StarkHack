@@ -26,33 +26,33 @@ export function RewardsByThreatLevelManager({ categories, setCategories }) {
 
 	function handleCriticalChange(param, value) {
 		if (param === "start") {
-			setCriticalStart(value);
+			setCriticalStart(parseFloat(value));
 		} else {
-			setCriticalEnd(value);
+			setCriticalEnd(parseFloat(value));
 		}
 	}
 
 	function handleHighChange(param, value) {
 		if (param === "start") {
-			setHighStart(value);
+			setHighStart(parseFloat(value));
 		} else {
-			setHighEnd(value);
+			setHighEnd(parseFloat(value));
 		}
 	}
 
 	function handleMediumChange(param, value) {
 		if (param === "start") {
-			setMediumStart(value);
+			setMediumStart(parseFloat(value));
 		} else {
-			setMediumEnd(value);
+			setMediumEnd(parseFloat(value));
 		}
 	}
 
 	function handleLowChange(param, value) {
 		if (param === "start") {
-			setLowStart(value);
+			setLowStart(parseFloat(value));
 		} else {
-			setLowEnd(value);
+			setLowEnd(parseFloat(value));
 		}
 	}
 
