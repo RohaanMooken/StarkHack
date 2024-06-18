@@ -23,23 +23,22 @@ export default function CreateBountyPage() {
 
 	const [impacts, setImpacts] = useState([]);
 	const [assets, setAssets] = useState([]);
+	const [categories, setCategories] = useState([]);
 
 	// Submit the bounty to the server
 	async function handleSubmit(e) {
 		e.preventDefault();
 
-		const res = await fetch(`${siteConfig.backendURL}/bounties`, {
+		const res = await fetch(`${siteConfig.backendURL}/bounties/`, {
 			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
 			body: JSON.stringify({
 				overview: editor1Content,
 				rewards: {
 					text: editor2Content,
-					categories: {
-						critical: criticalReward,
-						high: highReward,
-						medium: mediumReward,
-						low: lowReward,
-					},
+					categories: categories,
 				},
 				assets: { text: editor3Content, assets: assets },
 				impacts: { text: editor4Content, impacts: impacts },
@@ -68,10 +67,8 @@ export default function CreateBountyPage() {
 				<h3>Rewards by Threat Level</h3>
 				<Editor setEditorContent={setEditor2Content} />
 				<RewardsByThreatLevelManager
-					setCriticalReward={setCriticalReward}
-					setHighReward={setHighReward}
-					setMediumReward={setMediumReward}
-					setLowReward={setLowReward}
+					categories={categories}
+					setCategories={setCategories}
 				/>
 			</div>
 			<Separator className="my-4 w-7/12" />
