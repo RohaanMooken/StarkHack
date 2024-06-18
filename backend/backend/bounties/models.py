@@ -12,19 +12,19 @@ class Bounty(models.Model):
 
     # Program Overview
     vault_address = models.CharField(max_length=100, )
-    program_overview_html = models.TextField()
+    program_overview_html = models.TextField(default='')
 
     # Reward by Threat Level
-    rewards_by_threat_level_html = models.TextField()
+    rewards_by_threat_level_html = models.TextField(default='')
 
     # Assetes in Scope
-    optional_assets_in_scope_html = models.TextField()
+    optional_assets_in_scope_html = models.TextField(default='')
     
     # Impacts in Scope
-    optional_impacts_in_scope_html = models.TextField()
+    optional_impacts_in_scope_html = models.TextField(default='')
     
     # Out of Scope
-    out_of_scope_html = models.TextField()
+    out_of_scope_html = models.TextField(default='')
 
     
     def __str__(self):
