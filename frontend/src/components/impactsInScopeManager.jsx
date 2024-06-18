@@ -37,10 +37,10 @@ export function ImpactsInScopeManager({ impacts, setImpacts }) {
 							<SelectValue placeholder="Threat Level" />
 						</SelectTrigger>
 						<SelectContent side="top">
-							<SelectItem value="critical">Critical</SelectItem>
-							<SelectItem value="high">High</SelectItem>
-							<SelectItem value="medium">Medium</SelectItem>
-							<SelectItem value="low">Low</SelectItem>
+							<SelectItem value="Critical">Critical</SelectItem>
+							<SelectItem value="High">High</SelectItem>
+							<SelectItem value="Medium">Medium</SelectItem>
+							<SelectItem value="Low">Low</SelectItem>
 						</SelectContent>
 					</Select>
 					<Input
