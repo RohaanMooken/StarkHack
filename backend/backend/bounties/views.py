@@ -2,6 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db import transaction
 from .models import Bounty, BountyRewardCategory, BountyReward, BountyAssetInScope, BountyImpactInScope
+from django.forms.models import model_to_dict
+from .serializer import BountySerializer
 
 # Create your views here.
 class BountiesView(APIView):
@@ -113,13 +115,23 @@ class BountiesView(APIView):
         return Response({"message": "Bounty created!"})
 
     def get(self, request):
-        bounties = Bounty.objects.all()
-        data = []
-        for bounty in bounties:
-            data.append({
-                'id': bounty.id,
-                'name': bounty.name,
-                'max_bounty': bounty.max_bounty,
-                'last_updated': bounty.last_updated
-            })
-        return Response(data)
+        bounty_id = request.query_params.get('id')
+        if bounty_id:
+            try:
+                bounty = Bounty.objects.get(id=bounty_id)
+                serializer = BountySerializer(instance=bounty)
+                data = serializer.data
+                return Response(data)
+            except Bounty.DoesNotExist:
+                return Response({"message": "Bounty not found"}, status=404)
+        else:
+            bounties = Bounty.objects.all()
+            data = []
+            for bounty in bounties:
+                data.append({
+                    'id': bounty.id,
+                    'name': bounty.name,
+                    'max_bounty': bounty.max_bounty,
+                    'last_updated': bounty.last_updated
+                })
+            return Response(data)
