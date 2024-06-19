@@ -35,7 +35,7 @@ class Bounty(models.Model):
 
 
 class BountyRewardCategory(models.Model):
-    bounty = models.ForeignKey(Bounty, on_delete=models.CASCADE)
+    bounty = models.ForeignKey(Bounty, on_delete=models.CASCADE, related_name='rewards')
     category = models.CharField(max_length=100)
 
     def __str__(self):
@@ -43,7 +43,7 @@ class BountyRewardCategory(models.Model):
 
 
 class BountyReward(models.Model):
-    bounty_reward_category = models.ForeignKey(BountyRewardCategory, on_delete=models.CASCADE)
+    bounty_reward_category = models.ForeignKey(BountyRewardCategory, on_delete=models.CASCADE, related_name='rewards')
 
     threat_levels = [
         ('Critical', 'Critical'),
@@ -61,7 +61,7 @@ class BountyReward(models.Model):
 
 
 class BountyAssetInScope(models.Model):
-    bounty = models.ForeignKey(Bounty, on_delete=models.CASCADE)
+    bounty = models.ForeignKey(Bounty, on_delete=models.CASCADE, related_name='assets')
     target = models.CharField(max_length=200, )
     type = models.CharField(max_length=200, )
 
@@ -70,7 +70,7 @@ class BountyAssetInScope(models.Model):
 
 
 class BountyImpactInScope(models.Model):
-    bounty = models.ForeignKey(Bounty, on_delete=models.CASCADE)
+    bounty = models.ForeignKey(Bounty, on_delete=models.CASCADE, related_name='impacts')
     
     threat_levels = [
         ('Critical', 'Critical'),
