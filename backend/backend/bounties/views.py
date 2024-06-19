@@ -18,7 +18,7 @@ class BountiesView(APIView):
         with transaction.atomic():
             # Create Bounty object
             bounty = Bounty(
-                name="Test Bounty",
+                name=data["name"],
                 vault_tvl=1337,
                 max_bounty=m_bounty,
                 total_paid=1337,

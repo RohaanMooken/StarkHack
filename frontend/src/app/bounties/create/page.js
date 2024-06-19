@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { AssetsInScopeManager } from "@/components/assetsInScopeManager";
 import { siteConfig } from "@/config/site";
+import { Input } from "@/components/ui/input";
 
 export default function CreateBountyPage() {
 	const [editor1Content, setEditor1Content] = useState("");
@@ -24,6 +25,7 @@ export default function CreateBountyPage() {
 	const [impacts, setImpacts] = useState([]);
 	const [assets, setAssets] = useState([]);
 	const [categories, setCategories] = useState([]);
+	const [name, setName] = useState("");
 
 	// Submit the bounty to the server
 	async function handleSubmit(e) {
@@ -35,6 +37,7 @@ export default function CreateBountyPage() {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
+				name: name,
 				overview: editor1Content,
 				rewards: {
 					text: editor2Content,
@@ -60,6 +63,15 @@ export default function CreateBountyPage() {
 			<Separator className="my-4 w-7/12" />
 			<div className="flex flex-col items-center w-full">
 				<h3>Program Overview</h3>
+				<Input
+				className="w-4/12"
+					placeholder="Please enter you project name"
+					value={name}
+					onChange={(e) => {
+						e.preventDefault();
+						setName(e.target.value);
+					}}
+				/>
 				<Editor setEditorContent={setEditor1Content} />
 			</div>
 			<Separator className="my-4 w-7/12" />
