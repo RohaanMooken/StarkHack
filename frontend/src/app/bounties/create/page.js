@@ -17,11 +17,6 @@ export default function CreateBountyPage() {
 	const [editor4Content, setEditor4Content] = useState("");
 	const [editor5Content, setEditor5Content] = useState("");
 
-	const [criticalReward, setCriticalReward] = useState([]);
-	const [highReward, setHighReward] = useState([]);
-	const [mediumReward, setMediumReward] = useState([]);
-	const [lowReward, setLowReward] = useState([]);
-
 	const [impacts, setImpacts] = useState([]);
 	const [assets, setAssets] = useState([]);
 	const [categories, setCategories] = useState([]);
