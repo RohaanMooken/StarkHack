@@ -1,14 +1,17 @@
+import uuid
 from django.db import models
 
 # Create your models here.
 class Bounty(models.Model):
 
     # Bounty Information
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=100)
     vault_tvl = models.FloatField()
     max_bounty = models.FloatField()
     total_paid = models.FloatField()
     last_updated = models.DateField(auto_now=True)
+    
 
     # Program Overview
     vault_address = models.CharField(max_length=100, )
