@@ -113,4 +113,13 @@ class BountiesView(APIView):
         return Response({"message": "Bounty created!"})
 
     def get(self, request):
-        pass
+        bounties = Bounty.objects.all()
+        data = []
+        for bounty in bounties:
+            data.append({
+                'id': bounty.id,
+                'name': bounty.name,
+                'max_bounty': bounty.max_bounty,
+                'last_updated': bounty.last_updated
+            })
+        return Response(data)
