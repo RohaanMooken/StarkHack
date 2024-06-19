@@ -1,4 +1,4 @@
 export const siteConfig = {
-    name: "siteName",
+    name: "starkhack",
     backendURL: "http://localhost:8000",
 }
