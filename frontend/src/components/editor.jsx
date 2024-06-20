@@ -7,7 +7,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { cn } from "@/lib/utils";
 import "./editor.css";
 
-export function Editor({ className, setEditorContent, editorPlaceholder }) {
+export function Editor({ className, setEditorContent, editorPlaceholder="" }) {
 	const editor = useEditor({
 		extensions: [
 			StarterKit,
