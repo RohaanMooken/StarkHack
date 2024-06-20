@@ -84,3 +84,17 @@ class BountyImpactInScope(models.Model):
 
     def __str__(self):
         return self.impact
+
+
+def bounty_report_path(instance, filename):
+    return "bounty_{0}&{1}".format(instance.bounty.id, filename)
+
+
+class BountyReport(models.Model):
+    bounty = models.ForeignKey(Bounty, on_delete=models.CASCADE, related_name='reports')
+    short_description = models.TextField(default='')
+    address = models.CharField(max_length=100)
+    pdf = models.FileField(upload_to=bounty_report_path)
+
+    def __str__(self):
+        return self.report
