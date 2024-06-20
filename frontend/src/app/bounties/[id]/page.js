@@ -7,6 +7,8 @@ import {
 	CardFooter,
 	CardHeader,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ChevronRight } from "lucide-react";
 
 class BountyPage extends Component {
 	constructor(props) {
@@ -41,7 +43,7 @@ class BountyPage extends Component {
 		}
 
 		return (
-			<div className="flex flex-col items-center space-y-20">
+			<div className="flex flex-col items-center space-y-20 mb-8">
 				<h1>{data.name}</h1>
 				<Card className="w-6/12">
 					<CardHeader className="flex flex-col items-center">
@@ -66,7 +68,7 @@ class BountyPage extends Component {
 							}}
 						/>
 					</CardContent>
-					<CardFooter>
+					<CardFooter className="flex flex-col items-center space-y-8">
 						{data.rewards.map((rewardCategory) => (
 							<Card className="w-full">
 								<CardHeader className="flex flex-col items-center">
@@ -107,7 +109,7 @@ class BountyPage extends Component {
 							}}
 						/>
 					</CardContent>
-					<CardFooter className="flex flex-col items-center">
+					<CardFooter className="flex flex-col items-center space-y-4">
 						{data.assets.map((asset) => (
 							<Card className="w-full">
 								<CardContent className="flex flex-row items-center justify-between w-full">
@@ -129,7 +131,7 @@ class BountyPage extends Component {
 							}}
 						/>
 					</CardContent>
-					<CardFooter className="flex flex-col items-center">
+					<CardFooter className="flex flex-col items-center space-y-4">
 						{data.impacts.map((impact) => (
 							<Card className="w-full">
 								<CardContent className="flex flex-row items-center w-full justify-between">
@@ -154,6 +156,9 @@ class BountyPage extends Component {
 						/>
 					</CardContent>
 				</Card>
+				<Button>
+					Submit Bounty <ChevronRight className="mr-2 h-6 w-6" />
+				</Button>
 			</div>
 		);
 	}
