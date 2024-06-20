@@ -7,10 +7,11 @@ import {
 	CardFooter,
 	CardHeader,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 
-class BountyPage extends Component {
+export default class BountyPage extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -75,24 +76,29 @@ class BountyPage extends Component {
 									<h3>{rewardCategory.category}</h3>
 								</CardHeader>
 								<CardContent className="flex flex-col items-center">
-									{rewardCategory.rewards.map((reward) => (
-										<div className="flex flex-row items-center justify-between w-full">
-											<p className="font-bold">
-												{reward.threat_level}
-											</p>
-											{reward.reward_start ==
-											reward.reward_end ? (
-												<p className="mr-20">
-													{reward.reward_start}
+									{rewardCategory.rewards.map(
+										(reward, index) => (
+											<div
+												key={index}
+												className="flex flex-row items-center justify-between w-full"
+											>
+												<p className="font-bold">
+													{reward.threat_level}
 												</p>
-											) : (
-												<p className="mr-20">
-													{reward.reward_start} -{" "}
-													{reward.reward_end}
-												</p>
-											)}
-										</div>
-									))}
+												{reward.reward_start ==
+												reward.reward_end ? (
+													<p className="mr-20">
+														{reward.reward_start}
+													</p>
+												) : (
+													<p className="mr-20">
+														{reward.reward_start} -{" "}
+														{reward.reward_end}
+													</p>
+												)}
+											</div>
+										)
+									)}
 								</CardContent>
 							</Card>
 						))}
@@ -110,8 +116,8 @@ class BountyPage extends Component {
 						/>
 					</CardContent>
 					<CardFooter className="flex flex-col items-center space-y-4">
-						{data.assets.map((asset) => (
-							<Card className="w-full">
+						{data.assets.map((asset, index) => (
+							<Card key={index} className="w-full">
 								<CardContent className="flex flex-row items-center justify-between w-full">
 									<p>{asset.target}</p>
 									<p className="mr-20">{asset.type}</p>
@@ -132,8 +138,8 @@ class BountyPage extends Component {
 						/>
 					</CardContent>
 					<CardFooter className="flex flex-col items-center space-y-4">
-						{data.impacts.map((impact) => (
-							<Card className="w-full">
+						{data.impacts.map((impact, index) => (
+							<Card key={index} className="w-full">
 								<CardContent className="flex flex-row items-center w-full justify-between">
 									<p className="font-bold">
 										{impact.threat_level}
@@ -156,12 +162,13 @@ class BountyPage extends Component {
 						/>
 					</CardContent>
 				</Card>
-				<Button>
+				<Link
+					href={`/bounties/submit/${params.id}`}
+					className={buttonVariants({ variant: "outline" })}
+				>
 					Submit Bounty <ChevronRight className="mr-2 h-6 w-6" />
-				</Button>
+				</Link>
 			</div>
 		);
 	}
 }
-
-export default BountyPage;
