@@ -1,5 +1,6 @@
 import { MainNav } from "@/components/mainNav";
 import { ModeToggle } from "./modeToggle";
+import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 
 export function Header() {
 	return (
@@ -8,6 +9,7 @@ export function Header() {
 				<MainNav />
 				<div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
 					<nav className="flex items-center">
+						<DynamicWidget variant="modal" />
 						<ModeToggle />
 					</nav>
 				</div>
