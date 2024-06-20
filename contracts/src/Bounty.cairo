@@ -1,95 +1,199 @@
-#[starknet::interface]
-pub trait IBounty<TContractState> {
-    fn bounty(
-        ref self: TContractState,
-        value: u64,
-        name: felt252,
-        start_date: u64,
-        end_date: u64,
-    );
-
-    fn get_bounty_value(self: @TContractState, index: u64) -> u64;
-    fn get_bounty_name(self: @TContractState, index: u64) -> felt252;
-    fn get_bounty_start_date(self: @TContractState, index: u64) -> u64;
-    fn get_bounty_end_date(self: @TContractState, index: u64) -> u64;
-}
+use starknet::ContractAddress;
+use starknet::contract_address_const;
+use starknet::get_caller_address;
 
 #[starknet::contract]
 mod Bounty {
     use starknet::ContractAddress;
+    use starknet::get_caller_address;
+    // use starknet::get_block_timestamp;
 
-    #[storage]
-    struct Storage {
-        balance: felt252,
-        start_date: u64,
-        end_date: u64,
-        bounties: LegacyMap::<u64, BountyInfo>,
-        bounty_count: u64,
-        /// TODO: Implement saving for approved addresses
-        /// approved_addresses: LegacyMap::<ContractAddress, bool>,
-
-    }
-
+    // Struct to store bounty information
     #[derive(Drop, Serde, starknet::Store)]
     struct BountyInfo {
-        value: u64,
         name: felt252,
         start_date: u64,
         end_date: u64,
-        /// Save creator address which is the address to the owner of the bounty
-        /// creator: ContractAddress,
-
+        max_reward: u128,
+        team_address: ContractAddress,
     }
 
-    #[abi(embed_v0)]
-    impl BountyImpl of super::IBounty<ContractState> {
-        fn bounty(
-            ref self: ContractState,
-            value: u64,
+    // Struct to store bug information
+    #[derive(Drop, Serde, starknet::Store)]
+    struct BugInfo {
+        bounty_id: u64,
+        bug_id: u32,
+        hacker_address: ContractAddress,
+        severity: felt252,
+        approved: bool,
+    }
+    
+    // Contract storage
+    #[storage]
+    struct Storage {
+        bounties: LegacyMap::<u64, BountyInfo>,
+        bounty_count: u64,
+        bugs: LegacyMap::<(u64, u64), BugInfo>,
+        bug_count: LegacyMap::<u64, u64>,
+        staked_teams: LegacyMap::<ContractAddress, bool>,
+        owner: ContractAddress,
+        balance: u64,
+    }
+
+    // Contract interface
+    #[starknet::interface]
+    trait IBounty<TContractState> {
+        // Create a new bounty
+        fn create_bounty(
+            ref self: TContractState,
             name: felt252,
             start_date: u64,
             end_date: u64,
-        ) {
-            let index = self.bounty_count.read();
+            max_reward: u128,
+        );
+
+        // Submit a bug for a bounty
+        fn submit_bug(ref self: TContractState, bounty_id: u64, bug_id: u32);
+        
+        // Approve a bug and set its severity
+        fn approve_bug(ref self: TContractState, bounty_id: u64, bug_index: u64, severity: felt252);
+        
+        // Deny a bug
+        fn deny_bug(ref self: TContractState, bounty_id: u64, bug_index: u64);
+        
+        // Get a bounty by its ID
+        fn get_bounty(self: @TContractState, bounty_id: u64) -> BountyInfo;
+        
+        // Get a bug by its bounty ID and index
+        fn get_bug(self: @TContractState, bounty_id: u64, bug_index: u64) -> BugInfo;
+        
+        // Slash a team's stake
+        fn slash_team_stake(ref self: TContractState, team_address: ContractAddress);
+        
+        // Stake an amount
+        fn stake(ref self: TContractState) -> bool;
+        
+        // Unstake an amount
+        fn unstake(ref self: TContractState, address: ContractAddress) -> bool;
+        
+        // Check if an address is staked
+        fn get_staked(ref self: TContractState, address: ContractAddress) -> bool;
+        
+        // Get the current timestamp
+        // fn get_timestamp(ref self: TContractState, address: ContractAddress) -> u64;
+    }
+
+    // Contract constructor
+    #[constructor]
+    fn constructor(ref self: ContractState) {
+        self.owner.write(starknet::get_caller_address());
+    }
+
+    // Contract implementation
+    #[abi(embed_v0)]
+    impl BountyImpl of IBounty<ContractState> {
+        // Create a new bounty
+        fn create_bounty(ref self: ContractState, name: felt252, start_date: u64, end_date: u64, max_reward: u128) {
+            // Check if the caller is staked
+            let caller = get_caller_address();
+            assert!(self.get_staked(caller));
+
+            // Get the next bounty ID
+            let bounty_id = self.bounty_count.read();
+            
+            // Create a new bounty info
             let bounty_info = BountyInfo {
-                value: value,
-                name: name,
-                start_date: start_date,
-                end_date: end_date,
+                name,
+                start_date,
+                end_date,
+                max_reward,
+                team_address: caller,
             };
-            self.bounties.write(index, bounty_info);
-            self.bounty_count.write(index + 1);
-            /// self.approved_addresses.write(creator, true);
-
+            
+            // Add the bounty to storage
+            self.bounties.write(bounty_id, bounty_info);
+            
+            // Increment the bounty count
+            self.bounty_count.write(bounty_id + 1);
         }
 
-        fn get_bounty_value(self: @ContractState, index: u64) -> u64 {
-            let bounty_info = self.bounties.read(index);
-            bounty_info.value
+        // Submit a bug for a bounty
+        fn submit_bug(ref self: ContractState, bounty_id: u64, bug_id: u32) {
+            let caller = get_caller_address();
+            let bug_count = self.bug_count.read(bounty_id);
+            let bug_index = bug_count;
+            let bug_info = BugInfo {
+                bounty_id,
+                hacker_address: caller,
+                severity: 0,
+                approved: false,
+                bug_id,
+            };
+            self.bugs.write((bounty_id, bug_index), bug_info);
+            self.bug_count.write(bounty_id, bug_count + 1);
         }
 
-        fn get_bounty_name(self: @ContractState, index: u64) -> felt252 {
-            let bounty_info = self.bounties.read(index);
-            bounty_info.name
+        // Approve a bug and set its severity
+        fn approve_bug(ref self: ContractState, bounty_id: u64, bug_index: u64, severity: felt252) {
+            let caller: ContractAddress = get_caller_address();
+            let bounty_info = self.bounties.read(bounty_id);
+            assert!(caller == bounty_info.team_address);
+            let mut bug_info = self.bugs.read((bounty_id, bug_index));
+            assert!(!bug_info.approved);
+            bug_info.severity = severity;
+            bug_info.approved = true;
+            self.bugs.write((bounty_id, bug_index), bug_info);
         }
 
-        fn get_bounty_start_date(self: @ContractState, index: u64) -> u64 {
-            let bounty_info = self.bounties.read(index);
-            bounty_info.start_date
+        // Deny a bug
+        fn deny_bug(ref self: ContractState, bounty_id: u64, bug_index: u64) {
+            let caller = get_caller_address();
+            let bounty_info = self.bounties.read(bounty_id);
+            assert!(caller != bounty_info.team_address);
+            let mut bug_info = self.bugs.read((bounty_id, bug_index));
+            assert!(bug_info.approved);
+            bug_info.approved = false;
+            self.bugs.write((bounty_id, bug_index), bug_info);
         }
 
-        fn get_bounty_end_date(self: @ContractState, index: u64) -> u64 {
-            let bounty_info = self.bounties.read(index);
-            bounty_info.end_date
+        // Get a bounty by its ID
+        fn get_bounty(self: @ContractState, bounty_id: u64) -> BountyInfo {
+            self.bounties.read(bounty_id)
         }
 
-        /// TODO: Fix logic for getting the approved_addresses
-        /// fn get_approved_addresses(self: @ContractState) -> Array<ContractAddress> {
-        /// let mut approved_addresses = ArrayTrait::new();
-        ///     let approved_addresses_iter = self.approved_addresses.iter();
-        ///     for (address, _) in approved_addresses_iter {
-        ///         approved_addresses.append(address);
-        ///     }
-        /// }
+        // Get a bug by its bounty ID and index
+        fn get_bug(self: @ContractState, bounty_id: u64, bug_index: u64) -> BugInfo {
+            let caller = get_caller_address();
+            let bounty_info = self.bounties.read(bounty_id);
+            assert!(caller == bounty_info.team_address);
+            self.bugs.read((bounty_id, bug_index))
+        }
+
+        // Stake an amount
+        fn stake(ref self: ContractState) -> bool {
+            let caller = starknet::get_caller_address();
+            self.staked_teams.write(caller, true);
+            true
+        }
+        
+        // Slash a team's stake
+        fn slash_team_stake(ref self: ContractState, team_address: ContractAddress) {
+            let caller = starknet::get_caller_address();
+            assert!(caller != self.owner.read());
+            assert!(!self.get_staked(team_address));
+            self.unstake(team_address);
+        }
+
+        // Unstake an amount
+        fn unstake(ref self: ContractState, address: ContractAddress) -> bool {
+            assert!(self.staked_teams.read(address));
+            self.staked_teams.write(address, false);
+            true
+        }
+
+        // Check if an address is staked
+        fn get_staked(ref self: ContractState, address: ContractAddress) -> bool {
+            self.staked_teams.read(address)
+        }
     }
 }
