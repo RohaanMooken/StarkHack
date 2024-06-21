@@ -14,7 +14,7 @@ export function MainNav() {
 		<div className="mr-4 hidden md:flex">
 			<Link href="/" className="mr-6 flex items-center space-x-2">
 				{/* Add Icon here if needed/wanted */}
-				<span className="hidden font-bold sm:inline-block">
+				<span className="hidden font-bold sm:inline-block text-2xl">
 					{siteConfig.name}
 				</span>
 			</Link>
@@ -41,6 +41,19 @@ export function MainNav() {
 						)}
 					>
 						Create Bounty
+					</Link>
+				)}
+				{primaryWallet?.connected && (
+					<Link
+						href={`/profile/${primaryWallet?.address}`}
+						className={cn(
+							"transition-colors hover:text-foreground/80",
+							pathName === `/profile/${primaryWallet?.address}`
+								? "text-foreground"
+								: "text-foreground/60"
+						)}
+					>
+						Profile
 					</Link>
 				)}
 			</nav>
