@@ -76,8 +76,9 @@ mod Bounty {
         // Unstake an amount
         fn unstake(ref self: TContractState, address: ContractAddress) -> bool;
         
-        // Check if an address is staked
-        fn get_staked(ref self: TContractState, address: ContractAddress) -> bool;
+        // Get all staked addresses
+        fn get_all_staked(self: @TContractState) -> Array<ContractAddress>;
+
         // Get the name and index of each bounty (read-only)
         fn get_name_bounty(self: @TContractState) -> Array<(felt252, u64)>;
 
@@ -192,6 +193,27 @@ mod Bounty {
             assert!(self.staked_teams.read(address));
             self.staked_teams.write(address, false);
             true
+        }
+
+        // Get all staked addresses
+        fn get_all_staked(self: @ContractState) -> Array<ContractAddress> {
+            let mut result: Array<ContractAddress> = ArrayTrait::new();
+            let bounty_count = self.bounty_count.read();
+            
+            let mut i: u64 = 0;
+            loop {
+                if i >= bounty_count {
+                    break;
+                }
+                let bounty_info = self.bounties.read(i);
+                let team_address = bounty_info.team_address;
+                if self.staked_teams.read(team_address) {
+                    result.append(team_address);
+                }
+                i += 1;
+            };
+            
+            result
         }
 
         // Check if an address is staked
