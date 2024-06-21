@@ -23,6 +23,7 @@ class BountiesView(APIView):
             with transaction.atomic():
                 # Create Bounty object
                 bounty = Bounty(
+                    owner_address=data["owner_address"],
                     name=data["name"],
                     vault_tvl=1337,
                     max_bounty=m_bounty,
