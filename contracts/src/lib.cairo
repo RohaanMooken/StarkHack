@@ -220,10 +220,11 @@ mod Bounty {
         }
 
         // Check if an address is staked
-        fn get_staked(ref self: ContractState, address: ContractAddress) -> bool {
+        fn is_staked(self: @ContractState, address: ContractAddress) -> bool {
             self.staked_teams.read(address)
         }
 
+        // Get the name and index of each bounty
         fn get_name_bounty(self: @ContractState) -> Array<(felt252, u64)> {
             let mut result: Array<(felt252, u64)> = ArrayTrait::new();
             let bounty_count = self.bounty_count.read();
