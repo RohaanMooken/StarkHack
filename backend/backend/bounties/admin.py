@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Bounty, BountyRewardCategory, BountyReward, BountyAssetInScope, BountyImpactInScope
+from .models import Bounty, BountyRewardCategory, BountyReward, BountyAssetInScope, BountyImpactInScope, BountyReport
 
 class BountyRewardInline(admin.TabularInline):
     model = BountyReward
@@ -18,6 +18,10 @@ class BountyImpactInScopeInline(admin.TabularInline):
     model = BountyImpactInScope
     extra = 0
 
+class BountyReportInline(admin.TabularInline):
+    model = BountyReport
+    extra = 0
+
 class BountyAdmin(admin.ModelAdmin):
     exclude = ('last_updated',)
     fieldsets = [
@@ -29,6 +33,6 @@ class BountyAdmin(admin.ModelAdmin):
         ('Out of Scope', {'fields': ['out_of_scope_html']}),
     ]
     list_display = ('name', 'vault_tvl', 'max_bounty', 'total_paid', 'last_updated', 'vault_address', 'program_overview_html', 'rewards_by_threat_level_html', 'optional_assets_in_scope_html', 'optional_impacts_in_scope_html', 'out_of_scope_html')
-    inlines = [BountyRewardCategoryInline, BountyAssetInScopeInline, BountyImpactInScopeInline]
+    inlines = [BountyRewardCategoryInline, BountyAssetInScopeInline, BountyImpactInScopeInline, BountyReportInline]
 
 admin.site.register(Bounty, BountyAdmin)
