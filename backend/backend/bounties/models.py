@@ -11,6 +11,7 @@ class Bounty(models.Model):
     max_bounty = models.FloatField()
     total_paid = models.FloatField()
     last_updated = models.DateField(auto_now=True)
+    owner_address = models.CharField(max_length=100, default='')
     
 
     # Program Overview
@@ -93,7 +94,7 @@ def bounty_report_path(instance, filename):
 class BountyReport(models.Model):
     bounty = models.ForeignKey(Bounty, on_delete=models.CASCADE, related_name='reports')
     short_description = models.TextField(default='')
-    address = models.CharField(max_length=100)
+    owner_address = models.CharField(max_length=100, default='')
     pdf = models.FileField(upload_to=bounty_report_path)
 
     def __str__(self):
