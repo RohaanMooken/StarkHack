@@ -88,7 +88,7 @@ class BountyImpactInScope(models.Model):
 
 
 def bounty_report_path(instance, filename):
-    return "bounty_{0}&{1}".format(instance.bounty.id, filename)
+    return "bounty_{0}_{1}_{2}".format(instance.bounty.id, instance.owner_address, filename)
 
 
 class BountyReport(models.Model):
@@ -98,4 +98,4 @@ class BountyReport(models.Model):
     pdf = models.FileField(upload_to=bounty_report_path)
 
     def __str__(self):
-        return self.report
+        return self.owner_address
