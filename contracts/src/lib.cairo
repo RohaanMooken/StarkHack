@@ -72,6 +72,9 @@ mod Bounty {
         
         // Stake an amount
         fn stake(ref self: TContractState) -> bool;
+
+        // Check if a single address is staked
+        fn is_staked(self: @TContractState, address: ContractAddress) -> bool;
         
         // Unstake an amount
         fn unstake(ref self: TContractState, address: ContractAddress) -> bool;
@@ -100,7 +103,7 @@ mod Bounty {
         fn create_bounty(ref self: ContractState, name: felt252, start_date: u64, end_date: u64, max_reward: u128) {
             // Check if the caller is staked
             let caller = get_caller_address();
-            assert!(self.get_staked(caller));
+            assert!(self.is_staked(caller));
 
             // Get the next bounty ID
             let bounty_id = self.bounty_count.read();
@@ -184,7 +187,7 @@ mod Bounty {
         fn slash_team_stake(ref self: ContractState, team_address: ContractAddress) {
             let caller = starknet::get_caller_address();
             assert!(caller != self.owner.read());
-            assert!(!self.get_staked(team_address));
+            assert!(!self.is_staked(team_address));
             self.unstake(team_address);
         }
 
