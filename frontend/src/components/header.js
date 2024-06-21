@@ -1,7 +1,6 @@
 import { MainNav } from "@/components/mainNav";
 import { ModeToggle } from "./modeToggle";
 import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
-import ProfileAvatar from "@/components/profileAvatar";
 
 export function Header() {
 
