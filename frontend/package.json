@@ -13,6 +13,7 @@
     "@dynamic-labs/sdk-api": "^0.0.474",
     "@dynamic-labs/sdk-react-core": "^2.2.3",
     "@dynamic-labs/starknet": "^2.2.3",
+    "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
