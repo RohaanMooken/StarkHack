@@ -4,9 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/config/site";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 export function MainNav() {
 	const pathName = usePathname();
+	const { primaryWallet } = useDynamicContext();
 
 	return (
 		<div className="mr-4 hidden md:flex">
@@ -28,6 +30,19 @@ export function MainNav() {
 				>
 					Bounties
 				</Link>
+				{primaryWallet?.connected && (
+					<Link
+						href="/bounties/create"
+						className={cn(
+							"transition-colors hover:text-foreground/80",
+							pathName === "/bounties/create"
+								? "text-foreground"
+								: "text-foreground/60"
+						)}
+					>
+						Create Bounty
+					</Link>
+				)}
 			</nav>
 		</div>
 	);
