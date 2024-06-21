@@ -9,6 +9,17 @@ import { useState } from "react";
 import { AssetsInScopeManager } from "@/components/assetsInScopeManager";
 import { siteConfig } from "@/config/site";
 import { Input } from "@/components/ui/input";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function CreateBountyPage() {
 	const [editor1Content, setEditor1Content] = useState("");
@@ -22,9 +33,20 @@ export default function CreateBountyPage() {
 	const [categories, setCategories] = useState([]);
 	const [name, setName] = useState("");
 
+	const [alertDialog, setAlertDialog] = useState(false);
+	const { setShowAuthFlow, primaryWallet } = useDynamicContext();
+
 	// Submit the bounty to the server
 	async function handleSubmit(e) {
 		e.preventDefault();
+
+
+		if (!primaryWallet?.connected) {
+			setAlertDialog(true);
+			return;
+		}
+
+		const walletAddress = primaryWallet?.address;
 
 		const res = await fetch(`${siteConfig.backendURL}/bounties/`, {
 			method: "POST",
@@ -32,6 +54,7 @@ export default function CreateBountyPage() {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
+				owner_address: walletAddress,
 				name: name,
 				overview: editor1Content,
 				rewards: {
@@ -50,6 +73,31 @@ export default function CreateBountyPage() {
 			onSubmit={handleSubmit}
 			className="flex flex-col items-center space-y-8"
 		>
+			<AlertDialog open={alertDialog} onOpenChange={setAlertDialog}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>
+							Wallet not connected
+						</AlertDialogTitle>
+						<AlertDialogDescription>
+							To continue the bounty creation process, please
+							connect your wallet below.
+						</AlertDialogDescription>
+						<AlertDialogFooter>
+							<AlertDialogCancel
+								onClick={() => (window.location.href = "/")}
+							>
+								Home
+							</AlertDialogCancel>
+							<AlertDialogAction
+								onClick={() => setShowAuthFlow(true)}
+							>
+								Connect Wallet
+							</AlertDialogAction>
+						</AlertDialogFooter>
+					</AlertDialogHeader>
+				</AlertDialogContent>
+			</AlertDialog>
 			<h1>Create a Bounty</h1>
 			<p className="mb-4">
 				Please fill out the fields below accordingly to fit your
@@ -59,7 +107,7 @@ export default function CreateBountyPage() {
 			<div className="flex flex-col items-center w-full">
 				<h3>Program Overview</h3>
 				<Input
-				className="w-4/12"
+					className="w-4/12"
 					placeholder="Please enter you project name"
 					value={name}
 					onChange={(e) => {
