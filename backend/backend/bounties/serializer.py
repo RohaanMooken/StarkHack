@@ -5,6 +5,7 @@ from .models import (
     BountyReward,
     BountyAssetInScope,
     BountyImpactInScope,
+    BountyReport
 )
 
 
@@ -34,10 +35,17 @@ class BountyRewardCategorySerializer(serializers.ModelSerializer):
         fields = ['category', 'rewards']
 
 
+class BountyReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BountyReport
+        fields = ['short_description', 'owner_address', 'pdf']
+
+
 class BountySerializer(serializers.ModelSerializer):
     rewards = BountyRewardCategorySerializer(many=True, read_only=True)
     assets = BountyAssetInScopeSerializer(many=True, read_only=True)
     impacts = BountyImpactInScopeSerializer(many=True, read_only=True)
+    reports = BountyReportSerializer(many=True, read_only=True)
 
     class Meta:
         model = Bounty
@@ -55,4 +63,5 @@ class BountySerializer(serializers.ModelSerializer):
             'rewards',
             'assets',
             'impacts',
+            'reports',
         ]
