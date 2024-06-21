@@ -28,8 +28,6 @@ class BountyAdmin(admin.ModelAdmin):
         ('Bounty Information', {'fields': ['name', 'vault_tvl', 'max_bounty', 'total_paid', 'owner_address']}),
         ('Program Overview', {'fields': ['vault_address', 'program_overview_html']}),
         ('Reward by Threat Level', {'fields': ['rewards_by_threat_level_html']}),
-        ('Assetes in Scope', {'fields': ['optional_assets_in_scope_html']}),
-        ('Impacts in Scope', {'fields': ['optional_impacts_in_scope_html']}),
         ('Out of Scope', {'fields': ['out_of_scope_html']}),
     ]
     list_display = ('name', 'vault_tvl', 'max_bounty', 'total_paid', 'last_updated', 'vault_address', 'program_overview_html', 'rewards_by_threat_level_html', 'optional_assets_in_scope_html', 'optional_impacts_in_scope_html', 'out_of_scope_html')
