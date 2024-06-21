@@ -5,7 +5,7 @@ import { siteConfig } from "@/config/site";
 import { Editor } from "@/components/editor";
 import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import {
 	AlertDialog,
@@ -17,6 +17,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useRouter } from "next/navigation";
 
 export default function SubmitBountyPage({ params }) {
 	const [isLoading, setIsLoading] = useState(true);
@@ -24,10 +25,11 @@ export default function SubmitBountyPage({ params }) {
 
 	const [editorContent, setEditorContent] = useState("");
 	const [pdf, setPdf] = useState("");
-	
+
 	const [alertDialog, setAlertDialog] = useState(false);
 	const { setShowAuthFlow, primaryWallet } = useDynamicContext();
 
+	const router = useRouter();
 	useEffect(() => {
 		fetch(`${siteConfig.backendURL}/bounties?id=${params.id}`)
 			.then((response) => response.json())
@@ -63,7 +65,13 @@ export default function SubmitBountyPage({ params }) {
 				method: "POST",
 				body: formData,
 			}
-		).catch((err) => console.error(err));
+		)
+			.then((res) => {
+				if (res.ok) {
+					router.push("/bounties");
+				}
+			})
+			.catch((err) => console.error(err));
 	}
 
 	return isLoading ? (
@@ -77,8 +85,8 @@ export default function SubmitBountyPage({ params }) {
 							Wallet not connected
 						</AlertDialogTitle>
 						<AlertDialogDescription>
-							To continue the bounty report creation process, please
-							connect your wallet below.
+							To continue the bounty report creation process,
+							please connect your wallet below.
 						</AlertDialogDescription>
 						<AlertDialogFooter>
 							<AlertDialogCancel
@@ -113,7 +121,10 @@ export default function SubmitBountyPage({ params }) {
 						accept=".pdf"
 						onChange={(e) => setPdf(e.target.files[0])}
 					/>
-					<Button onClick={(e) => handleSubmit(e)}>
+					<Button
+						className={buttonVariants()}
+						onClick={(e) => handleSubmit(e)}
+					>
 						Submit Report
 					</Button>
 				</CardContent>

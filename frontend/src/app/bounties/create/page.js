@@ -20,6 +20,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useRouter } from "next/navigation";
 
 export default function CreateBountyPage() {
 	const [editor1Content, setEditor1Content] = useState("");
@@ -36,6 +37,7 @@ export default function CreateBountyPage() {
 	const [alertDialog, setAlertDialog] = useState(false);
 	const { setShowAuthFlow, primaryWallet } = useDynamicContext();
 
+	const router = useRouter();
 	// Submit the bounty to the server
 	async function handleSubmit(e) {
 		e.preventDefault();
@@ -65,7 +67,12 @@ export default function CreateBountyPage() {
 				impacts: { text: editor4Content, impacts: impacts },
 				outOfScope: editor5Content,
 			}),
-		}).catch((err) => console.error(err));
+		}).then((res) => {
+			if (res.ok) {
+				router.push("/bounties");
+			}
+		})
+		.catch((err) => console.error(err));
 	}
 
 	return (
