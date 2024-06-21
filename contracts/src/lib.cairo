@@ -98,6 +98,7 @@ mod Bounty {
     // Contract constructor
     #[constructor]
     fn constructor(ref self: ContractState) {
+        // TODO: Set owner the right way
         self.owner.write(starknet::get_caller_address());
     }
 
