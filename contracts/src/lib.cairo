@@ -78,6 +78,9 @@ mod Bounty {
         
         // Check if an address is staked
         fn get_staked(ref self: TContractState, address: ContractAddress) -> bool;
+        // Get the name and index of each bounty (read-only)
+        fn get_name_bounty(self: @TContractState) -> Array<(felt252, u64)>;
+
         
         // Get the current timestamp
         // fn get_timestamp(ref self: TContractState, address: ContractAddress) -> u64;
@@ -194,6 +197,23 @@ mod Bounty {
         // Check if an address is staked
         fn get_staked(ref self: ContractState, address: ContractAddress) -> bool {
             self.staked_teams.read(address)
+        }
+
+        fn get_name_bounty(self: @ContractState) -> Array<(felt252, u64)> {
+            let mut result: Array<(felt252, u64)> = ArrayTrait::new();
+            let bounty_count = self.bounty_count.read();
+            
+            let mut i: u64 = 0;
+            loop {
+                if i >= bounty_count {
+                    break;
+                }
+                let bounty_info = self.bounties.read(i);
+                result.append((bounty_info.name, i));
+                i += 1;
+            };
+            
+            result
         }
     }
 }
