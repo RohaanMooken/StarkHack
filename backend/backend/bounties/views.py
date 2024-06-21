@@ -11,6 +11,7 @@ from .models import (
 )
 from django.forms.models import model_to_dict
 from .serializer import BountySerializer
+from django.http import Http404, FileResponse
 
 
 # Create your views here.
@@ -135,7 +136,18 @@ class BountiesView(APIView):
 
     def get(self, request):
         bounty_id = request.query_params.get("id")
-        if bounty_id:
+        owner_address = request.query_params.get("owner_address")
+        if owner_address:
+            try:
+                data = []
+                bounties = Bounty.objects.filter(owner_address=owner_address)
+                for bounty in bounties:
+                    serializer = BountySerializer(instance=bounty)
+                    data.append(serializer.data)
+                return Response(data)
+            except Bounty.DoesNotExist:
+                return Response({"message": "Bounty not found"}, status=404)
+        elif bounty_id:
             try:
                 bounty = Bounty.objects.get(id=bounty_id)
                 serializer = BountySerializer(instance=bounty)
@@ -156,3 +168,18 @@ class BountiesView(APIView):
                     }
                 )
             return Response(data)
+
+class MediaView(APIView):
+    def get(self, request):
+        file_url = request.query_params.get("file_url")[1:]
+        if not file_url:
+            return Response({"error": "No file_url provided"}, status=400)
+
+        try:
+            # Assuming file_url is the name of the file in the pdf field
+            report = BountyReport.objects.get(pdf=file_url)
+        except BountyReport.DoesNotExist:
+            raise Http404("File does not exist")
+
+        # Serve the file
+        return FileResponse(report.pdf, as_attachment=True, filename=report.pdf.name)
