@@ -226,7 +226,7 @@ export default function ProfilePage({ params }) {
 			</div>
 			{/* Bounties */}
 			{data.length > 0 ? (
-				<Card>
+				<Card className="w-6/12">
 					<CardHeader>
 						<CardTitle className="flex flex-col items-center">
 							You're Bounties
@@ -289,6 +289,77 @@ export default function ProfilePage({ params }) {
 												)
 											)
 										)}
+									</AccordionContent>
+								</AccordionItem>
+							))}
+						</Accordion>
+					</CardContent>
+				</Card>
+			) : (
+				<></>
+			)}
+			{/* Reports */}
+			{reports.length > 0 ? (
+				<Card className="w-6/12">
+					<CardHeader>
+						<CardTitle className="flex flex-col items-center">
+							You're Reports
+						</CardTitle>
+						<CardDescription>
+							Here are the reports you've created. If you click on
+							one of them, you will be able to see all relevant
+							information.
+						</CardDescription>
+					</CardHeader>
+					<CardContent className="flex flex-col items-center space-y-8">
+						<Accordion type="single" className="w-full" collapsible>
+							{reports.map((report, index) => (
+								<AccordionItem
+									value={`item-${index}`}
+									key={index}
+								>
+									<AccordionTrigger>
+										{report.id}
+									</AccordionTrigger>
+									<AccordionContent className="flex flex-col items-start">
+										<div>
+											<span className="font-bold">
+												Bounty Name:
+											</span>{" "}
+											{report.bounty_name}
+										</div>
+										<div>
+											<span className="font-bold">
+												Short Description:
+											</span>
+											<div
+												dangerouslySetInnerHTML={{
+													__html: report.short_description,
+												}}
+											/>
+										</div>
+										<div>
+											<span className="font-bold">
+												Status:
+											</span>{" "}
+											{0 === 0
+												? "pending"
+												: 0 === 1
+												? "approved"
+												: "denied"}
+										</div>
+										<div>
+											<span className="font-bold">
+												Severity:
+											</span>{" "}
+											{1 === 0
+												? "Low"
+												: 1 === 1
+												? "Medium"
+												: 1 === 2
+												? "High"
+												: "Critical"}
+										</div>
 									</AccordionContent>
 								</AccordionItem>
 							))}
