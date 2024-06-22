@@ -12,6 +12,7 @@ class Bounty(models.Model):
     total_paid = models.FloatField()
     last_updated = models.DateField(auto_now=True)
     owner_address = models.CharField(max_length=100, default='')
+    index = models.IntegerField(default=0)
     
 
     # Program Overview
