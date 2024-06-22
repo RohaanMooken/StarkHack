@@ -31,6 +31,12 @@ mod Bounty {
         bug_id: u32,
     }
     
+    #[derive(Drop, Serde, starknet::Store)]
+    struct LeaderboardEntry {
+        address: ContractAddress,
+        xp: u128,
+    }
+
     // Contract storage
     #[storage]
     struct Storage {
@@ -237,19 +243,27 @@ mod Bounty {
         fn get_all_xp(self: @ContractState) -> Array<(ContractAddress, u128)> {
             let mut result: Array<(ContractAddress, u128)> = ArrayTrait::new();
             let bounty_count = self.bounty_count.read();
-            let mut i: u64 = 0;
-            loop {
-                if i >= bounty_count {
-                    break;
-                }
-                let bounty_info = self.bounties.read(i);
-                let team_address = bounty_info.team_address;
-                let xp = self.user_xp.read(team_address);
-                if xp > 0 {
-                    result.append((team_address, xp));
-                }
-                i += 1;
+            let mut bounty_id: u64 = 0;
+        
+            while bounty_id < bounty_count {
+                let bug_count = self.bug_count.read(bounty_id);
+                let mut bug_index: u64 = 0;
+        
+                while bug_index < bug_count {
+                    let bug_info = self.bugs.read((bounty_id, bug_index));
+                    let hacker_address = bug_info.hacker_address;
+                    let xp = self.user_xp.read(hacker_address);
+        
+                    if xp > 0 {
+                        result.append((hacker_address, xp));
+                    }
+        
+                    bug_index += 1;
+                };
+        
+                bounty_id += 1;
             };
+        
             result
         }
 
