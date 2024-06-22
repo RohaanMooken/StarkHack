@@ -21,7 +21,7 @@ mod Bounty {
     }
 
     // Struct to store bug information
-    #[derive(Drop, Serde, starknet::Store)]
+    #[derive(Drop, Serde, starknet::Store, Clone)]
     struct BugInfo {
         bounty_id: u64,
         hacker_address: ContractAddress,
@@ -44,6 +44,8 @@ mod Bounty {
         staked_teams: LegacyMap::<ContractAddress, bool>,
         total_staked: u128,
         user_rewards: LegacyMap::<ContractAddress, u128>,
+        user_xp: LegacyMap::<ContractAddress, u128>,
+
     }
 
     // Contract interface
@@ -93,6 +95,12 @@ mod Bounty {
         
         // Get total rewards paid out
         fn get_total_rewards(self: @TContractState, address: ContractAddress) -> u128;
+
+        // Get XP of an address
+        fn get_xp(self: @TContractState, address: ContractAddress) -> u128;
+
+        // Get all addresses with XP
+        fn get_all_xp(self: @TContractState) -> Array<(ContractAddress, u128)>;
     }
 
     // Contract constructor
@@ -170,17 +178,22 @@ mod Bounty {
             let mut bug_info = self.bugs.read((bounty_id, bug_index));
             assert!(bug_info.status == 0, "Bug must be in pending status");
             assert!(reward <= bounty_info.max_reward, "Reward exceeds max reward");
-
+            
+            // Assign XP based on severity
+            let xp = match severity {
+                0 => 10, // Low severity
+                1 => 25, // Medium severity
+                2 => 50, // High severity
+                _ => 0,
+            };
             bug_info.status = 1;
             bug_info.severity = severity;
             bug_info.reward = reward;
-            self.bugs.write((bounty_id, bug_index), bug_info);
+            self.bugs.write((bounty_id, bug_index), bug_info.clone()); // Clone bug_info before writing
 
-            // bounty.total_paid += reward;
-            // self.bounties.write(bounty_id, bounty);
-
-            // let hacker_rewards = self.user_rewards.read(bug.hacker_address);
-            // self.user_rewards.write(bug.hacker_address, hacker_rewards + reward);
+            // Update hacker's XP
+            let hacker_xp = self.user_xp.read(bug_info.hacker_address);
+            self.user_xp.write(bug_info.hacker_address, hacker_xp + xp);
         }
         
         // Deny a bug (with reason)
@@ -305,6 +318,31 @@ mod Bounty {
         // Get a total reward for one user
         fn get_total_rewards(self: @ContractState, address: ContractAddress) -> u128 {
             self.user_rewards.read(address)
+        }
+
+        // New function to get XP of an address
+        fn get_xp(self: @ContractState, address: ContractAddress) -> u128 {
+            self.user_xp.read(address)
+        }
+
+        // New function to get all addresses with XP
+        fn get_all_xp(self: @ContractState) -> Array<(ContractAddress, u128)> {
+            let mut result: Array<(ContractAddress, u128)> = ArrayTrait::new();
+            let bounty_count = self.bounty_count.read();
+            let mut i: u64 = 0;
+            loop {
+                if i >= bounty_count {
+                    break;
+                }
+                let bounty_info = self.bounties.read(i);
+                let team_address = bounty_info.team_address;
+                let xp = self.user_xp.read(team_address);
+                if xp > 0 {
+                    result.append((team_address, xp));
+                }
+                i += 1;
+            };
+            result
         }
     }
 }
