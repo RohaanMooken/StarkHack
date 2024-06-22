@@ -41,6 +41,7 @@
     "react-dom": "^18",
     "react-wrap-balancer": "^1.1.1",
     "recharts": "^2.12.7",
+    "starknet": "^5.25.0",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "viem": "^2.15.1"
