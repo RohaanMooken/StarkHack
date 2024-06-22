@@ -27,7 +27,6 @@ mod Bounty {
         hacker_address: ContractAddress,
         severity: u8, // 0: Low, 1: Medium, 2: High
         status: u8, // 0: Pending, 1: Approved, 2: Denied
-        reward: u128,
         submission_date: u64,
         bug_id: u32,
     }
@@ -58,7 +57,7 @@ mod Bounty {
         fn submit_bug(ref self: TContractState, bounty_id: u64, bug_id: u32);
         
         // Approve a bug and set its severity
-        fn approve_bug(ref self: TContractState, bounty_id: u64, bug_index: u64, severity: u8, reward: u128);
+        fn approve_bug(ref self: TContractState, bounty_id: u64, bug_index: u64, severity: u8);
         
         // Deny a bug
         fn deny_bug(ref self: TContractState, bounty_id: u64, bug_index: u64, reason: felt252);
@@ -86,16 +85,10 @@ mod Bounty {
         
         // Get the name and index of each bounty (read-only)
         fn get_name_bounty(self: @TContractState) -> Array<(felt252, u64)>;
-        
-        // Withdraw your rewards
-        fn withdraw_rewards(ref self: TContractState);
-        
+                
         // Update a bounty
         fn update_bounty(ref self: TContractState, bounty_id: u64, name: felt252, end_date: u64, max_reward: u128);
         
-        // Get total rewards paid out
-        fn get_total_rewards(self: @TContractState, address: ContractAddress) -> u128;
-
         // Get XP of an address
         fn get_xp(self: @TContractState, address: ContractAddress) -> u128;
 
@@ -173,7 +166,6 @@ mod Bounty {
                 hacker_address: caller,
                 severity: 0,
                 status: 0,
-                reward: 0,
                 submission_date: 0,
                 bug_id,
             };
@@ -188,7 +180,6 @@ mod Bounty {
             bounty_id: u64,
             bug_index: u64,
             severity: u8,
-            reward: u128
         ) {
             let caller = get_caller_address();
             let mut bounty_info = self.bounties.read(bounty_id);
@@ -196,8 +187,7 @@ mod Bounty {
             
             let mut bug_info = self.bugs.read((bounty_id, bug_index));
             assert!(bug_info.status == 0, "Bug must be in pending status");
-            assert!(reward <= bounty_info.max_reward, "Reward exceeds max reward");
-            
+
             // Assign XP based on severity
             let xp = match severity {
                 0 => 10, // Low severity
@@ -207,7 +197,6 @@ mod Bounty {
             };
             bug_info.status = 1;
             bug_info.severity = severity;
-            bug_info.reward = reward;
             self.bugs.write((bounty_id, bug_index), bug_info.clone()); // Clone bug_info before writing
 
             // Update hacker's XP
@@ -229,15 +218,6 @@ mod Bounty {
             self.bugs.write((bounty_id, bug_index), bug);
         }
 
-        // Withdraw funds
-        fn withdraw_rewards(ref self: ContractState) {
-            let caller = get_caller_address();
-            let rewards = self.user_rewards.read(caller);
-            assert!(rewards > 0, "No rewards to withdraw");
-            self.user_rewards.write(caller, 0);
-            // Transfer rewards to caller (TODO: implement actual transfer logic)
-        }
-
         // Get a bounty by its ID
         fn get_bounty(self: @ContractState, bounty_id: u64) -> BountyInfo {
             self.bounties.read(bounty_id)
@@ -246,11 +226,6 @@ mod Bounty {
         // Get a bug by its bounty ID and index
         fn get_bug(self: @ContractState, bounty_id: u64, bug_index: u64) -> BugInfo {
             self.bugs.read((bounty_id, bug_index))
-        }
-
-        // Get a total reward for one user
-        fn get_total_rewards(self: @ContractState, address: ContractAddress) -> u128 {
-            self.user_rewards.read(address)
         }
 
         // New function to get XP of an address
