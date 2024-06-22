@@ -176,12 +176,22 @@ class BountyReportView(APIView):
         if not owner_address:
             return Response({"error": "No owner_address provided"}, status=400)
         
+        data = []
+
         try:
             reports = BountyReport.objects.filter(owner_address=owner_address)
+            for report in reports:
+                data.append(
+                    {
+                        "id": report.id,
+                        "bounty_name": report.bounty.name,
+                        "short_description": report.short_description,
+                    }
+                )
         except BountyReport.DoesNotExist:
             raise Http404("No reports found")
         
-        return Response([model_to_dict(report) for report in reports])
+        return Response(data)
 
 
 class MediaView(APIView):
