@@ -56,6 +56,17 @@ export function MainNav() {
 						Profile
 					</Link>
 				)}
+				<Link
+					href="/leaderboard"
+					className={cn(
+						"transition-colors hover:text-foreground/80",
+						pathName === "/leaderboard"
+							? "text-foreground"
+							: "text-foreground/60"
+					)}
+				>
+					Leaderboard
+				</Link>
 			</nav>
 		</div>
 	);
