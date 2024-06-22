@@ -92,6 +92,7 @@ def bounty_report_path(instance, filename):
 
 
 class BountyReport(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     bounty = models.ForeignKey(Bounty, on_delete=models.CASCADE, related_name='reports')
     short_description = models.TextField(default='')
     owner_address = models.CharField(max_length=100, default='')
