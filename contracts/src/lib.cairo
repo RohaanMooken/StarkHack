@@ -140,6 +140,25 @@ mod Bounty {
             bounty_id
         }
 
+        // Update a bounty
+        fn update_bounty(
+            ref self: ContractState,
+            bounty_id: u64,
+            name: felt252,
+            end_date: u64,
+            max_reward: u128
+        ) {
+            let caller = get_caller_address();
+            let mut bounty = self.bounties.read(bounty_id);
+            assert!(caller == bounty.team_address, "Only bounty creator can update");
+            assert!(bounty.is_active, "Cannot update inactive bounty");
+
+            bounty.name = name;
+            bounty.end_date = end_date;
+            bounty.max_reward = max_reward;
+            self.bounties.write(bounty_id, bounty);
+        }
+
         // Submit a bug for a bounty
         fn submit_bug(ref self: ContractState, bounty_id: u64, bug_id: u32) {
             let caller = get_caller_address();
@@ -209,84 +228,7 @@ mod Bounty {
             // Store denial reason (you might want to add this field to BugInfo)
             self.bugs.write((bounty_id, bug_index), bug);
         }
-        
-        // Get a bounty by its ID
-        fn get_bounty(self: @ContractState, bounty_id: u64) -> BountyInfo {
-            self.bounties.read(bounty_id)
-        }
 
-        // Get a bug by its bounty ID and index
-        fn get_bug(self: @ContractState, bounty_id: u64, bug_index: u64) -> BugInfo {
-            self.bugs.read((bounty_id, bug_index))
-        }
-
-        // Stake an amount
-        fn stake(ref self: ContractState) -> bool {
-            let caller = starknet::get_caller_address();
-            self.staked_teams.write(caller, true);
-            true
-        }
-
-        // Slash a team's stake
-        fn slash_team_stake(ref self: ContractState, team_address: ContractAddress) {
-            let caller = starknet::get_caller_address();
-            assert!(caller != self.owner.read());
-            assert!(!self.is_staked(team_address));
-            self.unstake(team_address);
-        }
-
-        // Unstake an amount
-        fn unstake(ref self: ContractState, address: ContractAddress) -> bool {
-            assert!(self.staked_teams.read(address));
-            self.staked_teams.write(address, false);
-            true
-        }
-
-        // Get all staked addresses
-        fn get_all_staked(self: @ContractState) -> Array<ContractAddress> {
-            let mut result: Array<ContractAddress> = ArrayTrait::new();
-            let bounty_count = self.bounty_count.read();
-            
-            let mut i: u64 = 0;
-            loop {
-                if i >= bounty_count {
-                    break;
-                }
-                let bounty_info = self.bounties.read(i);
-                let team_address = bounty_info.team_address;
-                if self.staked_teams.read(team_address) {
-                    result.append(team_address);
-                }
-                i += 1;
-            };
-            
-            result
-        }
-
-        // Check if an address is staked
-        fn is_staked(self: @ContractState, address: ContractAddress) -> bool {
-            self.staked_teams.read(address)
-        }
-
-        // Get the name and index of each bounty
-        fn get_name_bounty(self: @ContractState) -> Array<(felt252, u64)> {
-            let mut result: Array<(felt252, u64)> = ArrayTrait::new();
-            let bounty_count = self.bounty_count.read();
-            
-            let mut i: u64 = 0;
-            loop {
-                if i >= bounty_count {
-                    break;
-                }
-                let bounty_info = self.bounties.read(i);
-                result.append((bounty_info.name, i));
-                i += 1;
-            };
-            
-            result
-        }
-
-        
         // Withdraw funds
         fn withdraw_rewards(ref self: ContractState) {
             let caller = get_caller_address();
@@ -296,23 +238,14 @@ mod Bounty {
             // Transfer rewards to caller (TODO: implement actual transfer logic)
         }
 
-        // Update a bounty
-        fn update_bounty(
-            ref self: ContractState,
-            bounty_id: u64,
-            name: felt252,
-            end_date: u64,
-            max_reward: u128
-        ) {
-            let caller = get_caller_address();
-            let mut bounty = self.bounties.read(bounty_id);
-            assert!(caller == bounty.team_address, "Only bounty creator can update");
-            assert!(bounty.is_active, "Cannot update inactive bounty");
+        // Get a bounty by its ID
+        fn get_bounty(self: @ContractState, bounty_id: u64) -> BountyInfo {
+            self.bounties.read(bounty_id)
+        }
 
-            bounty.name = name;
-            bounty.end_date = end_date;
-            bounty.max_reward = max_reward;
-            self.bounties.write(bounty_id, bounty);
+        // Get a bug by its bounty ID and index
+        fn get_bug(self: @ContractState, bounty_id: u64, bug_index: u64) -> BugInfo {
+            self.bugs.read((bounty_id, bug_index))
         }
 
         // Get a total reward for one user
@@ -343,6 +276,72 @@ mod Bounty {
                 i += 1;
             };
             result
+        }
+
+        // Get the name and index of each bounty
+        fn get_name_bounty(self: @ContractState) -> Array<(felt252, u64)> {
+            let mut result: Array<(felt252, u64)> = ArrayTrait::new();
+            let bounty_count = self.bounty_count.read();
+            
+            let mut i: u64 = 0;
+            loop {
+                if i >= bounty_count {
+                    break;
+                }
+                let bounty_info = self.bounties.read(i);
+                result.append((bounty_info.name, i));
+                i += 1;
+            };
+            
+            result
+        }
+
+        // Get all staked addresses
+        fn get_all_staked(self: @ContractState) -> Array<ContractAddress> {
+            let mut result: Array<ContractAddress> = ArrayTrait::new();
+            let bounty_count = self.bounty_count.read();
+            
+            let mut i: u64 = 0;
+            loop {
+                if i >= bounty_count {
+                    break;
+                }
+                let bounty_info = self.bounties.read(i);
+                let team_address = bounty_info.team_address;
+                if self.staked_teams.read(team_address) {
+                    result.append(team_address);
+                }
+                i += 1;
+            };
+            
+            result
+        }
+
+        // Stake an amount
+        fn stake(ref self: ContractState) -> bool {
+            let caller = starknet::get_caller_address();
+            self.staked_teams.write(caller, true);
+            true
+        }
+
+        // Slash a team's stake
+        fn slash_team_stake(ref self: ContractState, team_address: ContractAddress) {
+            let caller = starknet::get_caller_address();
+            assert!(caller != self.owner.read());
+            assert!(!self.is_staked(team_address));
+            self.unstake(team_address);
+        }
+
+        // Unstake an amount
+        fn unstake(ref self: ContractState, address: ContractAddress) -> bool {
+            assert!(self.staked_teams.read(address));
+            self.staked_teams.write(address, false);
+            true
+        }
+
+        // Check if an address is staked
+        fn is_staked(self: @ContractState, address: ContractAddress) -> bool {
+            self.staked_teams.read(address)
         }
     }
 }
