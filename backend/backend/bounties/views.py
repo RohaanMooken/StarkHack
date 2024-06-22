@@ -169,6 +169,21 @@ class BountiesView(APIView):
                 )
             return Response(data)
 
+
+class BountyReportView(APIView):
+    def get(self, request):
+        owner_address = request.query_params.get("owner_address")
+        if not owner_address:
+            return Response({"error": "No owner_address provided"}, status=400)
+        
+        try:
+            reports = BountyReport.objects.filter(owner_address=owner_address)
+        except BountyReport.DoesNotExist:
+            raise Http404("No reports found")
+        
+        return Response([model_to_dict(report) for report in reports])
+
+
 class MediaView(APIView):
     def get(self, request):
         file_url = request.query_params.get("file_url")[1:]
