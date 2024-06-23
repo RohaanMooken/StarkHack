@@ -167,3 +167,105 @@ export async function getBountyCount() {
 		console.log(error);
 	}
 }
+
+export async function getReportCount() {
+	try {
+		const { abi: testAbi } = await provider.getClassAt(
+			siteConfig.testAddress
+		);
+
+		if (!testAbi) {
+			throw new Error("ABI not found for the contract.");
+		}
+
+		const myTestContract = new Contract(
+			testAbi,
+			siteConfig.testAddress,
+			provider
+		);
+
+		const reportCount = await myTestContract.get_bug_count();
+
+		return reportCount;
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+export async function getReport(bounty_index, report_index) {
+	try {
+		const { abi: testAbi } = await provider.getClassAt(
+			siteConfig.testAddress
+		);
+
+		if (!testAbi) {
+			throw new Error("ABI not found for the contract.");
+		}
+
+		const myTestContract = new Contract(
+			testAbi,
+			siteConfig.testAddress,
+			provider
+		);
+
+		const reportCount = await myTestContract.get_bug(bounty_index, report_index);
+
+		return reportCount;
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+export async function getReports(bounty_index, report_count) {
+	try {
+		const { abi: testAbi } = await provider.getClassAt(
+			siteConfig.testAddress
+		);
+
+		if (!testAbi) {
+			throw new Error("ABI not found for the contract.");
+		}
+
+		const myTestContract = new Contract(
+			testAbi,
+			siteConfig.testAddress,
+			provider
+		);
+
+		let data = [];
+
+		for (let i = 0; i < report_count; i++) {
+			const report = await myTestContract.get_bug(bounty_index, i);
+			data.append(report);
+		}
+
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+export async function getReportsFromAddress(address) {
+	try {
+		const { abi: testAbi } = await provider.getClassAt(
+			siteConfig.testAddress
+		);
+
+		if (!testAbi) {
+			throw new Error("ABI not found for the contract.");
+		}
+
+		const myTestContract = new Contract(
+			testAbi,
+			siteConfig.testAddress,
+			provider
+		);
+
+
+		const data = await myTestContract.get_bug_add(address);
+
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+}

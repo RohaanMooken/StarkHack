@@ -182,6 +182,8 @@ class BountyReportView(APIView):
                         "id": report.id,
                         "bounty_name": report.bounty.name,
                         "short_description": report.short_description,
+                        "uuid": report.id.hex[:8],
+                        "bounty_index": report.bounty.index,
                     }
                 )
         except BountyReport.DoesNotExist:

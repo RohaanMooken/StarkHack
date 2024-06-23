@@ -17,6 +17,11 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
+import {
+	getReportCount,
+	getReports,
+	getReportsFromAddress,
+} from "@/lib/smartContractFunctions";
 
 export default function ProfilePage({ params }) {
 	const cardData = [
@@ -32,6 +37,7 @@ export default function ProfilePage({ params }) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [data, setData] = useState([]);
 	const [reports, setReports] = useState([]);
+	const [onChainReports, setOnChainReports] = useState([]);
 
 	useEffect(() => {
 		fetch(
@@ -53,6 +59,10 @@ export default function ProfilePage({ params }) {
 				setReports(data);
 				setIsLoading(false);
 			})
+			.then(async () => {
+				setOnChainReports(await getReportsFromAddress(params.address));
+			})
+
 			.catch((error) => {
 				console.log(error);
 				setIsLoading(false);
@@ -78,7 +88,6 @@ export default function ProfilePage({ params }) {
 			link.href = URL.createObjectURL(blob);
 
 			// Set the download attribute to the desired file name
-			console.log(fileUrl.split("/").pop());
 			link.setAttribute("download", fileUrl.split("/").pop());
 
 			// Append the link to the body
@@ -97,10 +106,27 @@ export default function ProfilePage({ params }) {
 		}
 	}
 
+	reports.forEach((report) => {
+		// Convert uuid to BigInt for comparison
+		const reportBugIdBigInt = BigInt(`0x${report.uuid}`);
+
+		// Find the matching report in onChainReports
+		const matchingOnChainReport = onChainReports.find(
+			(onChainReport) => onChainReport.bug_id === reportBugIdBigInt
+		);
+
+		if (matchingOnChainReport) {
+			// Extend the report with severity and status from the matching onChainReport
+			report.severity = Number(matchingOnChainReport.severity);
+			report.status = Number(matchingOnChainReport.status);
+		}
+	});
+
 	return isLoading ? (
 		<div>Loading...</div>
 	) : (
 		<div className="flex flex-col items-center space-y-20 mt-20">
+			{() => {}}
 			<h1 className="font-bold tracking-tight">Hacker Dashboard</h1>
 			<div className="flex-1 space-y-4 p-8 pt-6 w-full md:w-[80%] lg:w-[70%] mx-auto mt-16">
 				<div className="flex items-center justify-between space-y-2"></div>
@@ -340,11 +366,11 @@ export default function ProfilePage({ params }) {
 										</div>
 										<div>
 											<span className="font-bold">
-												Status:
+												Status:{" "}
 											</span>{" "}
-											{0 === 0
+											{report.status === 0
 												? "pending"
-												: 0 === 1
+												: report.status === 1
 												? "approved"
 												: "denied"}
 										</div>
@@ -352,11 +378,11 @@ export default function ProfilePage({ params }) {
 											<span className="font-bold">
 												Severity:
 											</span>{" "}
-											{1 === 0
+											{report.severity === 0
 												? "Low"
-												: 1 === 1
+												: report.severity === 1
 												? "Medium"
-												: 1 === 2
+												: report.severity === 2
 												? "High"
 												: "Critical"}
 										</div>
