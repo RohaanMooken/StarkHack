@@ -40,6 +40,7 @@ class BountiesView(APIView):
             with transaction.atomic():
                 # Create Bounty object
                 bounty = Bounty(
+                    index=data["index"],
                     owner_address=data["owner_address"],
                     name=data["name"],
                     vault_tvl=1337,

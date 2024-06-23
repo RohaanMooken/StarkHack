@@ -121,7 +121,9 @@ export async function createBounty(name, startDate, endDate, maxReward, account)
 
 		const bountyResponse = await myTestContract.create_bounty(name, startDate, endDate, maxReward);
 
-        return bountyResponse;
+        const bountyCount = await myTestContract.get_bounty_count();
+
+        return bountyCount;
 	} catch (error) {
 		console.log(error);
 	}
