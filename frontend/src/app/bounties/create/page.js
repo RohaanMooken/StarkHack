@@ -9,7 +9,11 @@ import { useState } from "react";
 import { AssetsInScopeManager } from "@/components/assetsInScopeManager";
 import { siteConfig } from "@/config/site";
 import { Input } from "@/components/ui/input";
-import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import {
+	useDynamicContext,
+	useEmbeddedWallet,
+	getNetwork,
+} from "@dynamic-labs/sdk-react-core";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -21,6 +25,7 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
+import { createBounty } from "@/lib/smartContractFunctions";
 
 export default function CreateBountyPage() {
 	const [editor1Content, setEditor1Content] = useState("");
@@ -38,10 +43,12 @@ export default function CreateBountyPage() {
 	const { setShowAuthFlow, primaryWallet } = useDynamicContext();
 
 	const router = useRouter();
+
+	const walletConnector = primaryWallet?.connector;
+
 	// Submit the bounty to the server
 	async function handleSubmit(e) {
 		e.preventDefault();
-
 
 		if (!primaryWallet?.connected) {
 			setAlertDialog(true);
@@ -67,12 +74,18 @@ export default function CreateBountyPage() {
 				impacts: { text: editor4Content, impacts: impacts },
 				outOfScope: editor5Content,
 			}),
-		}).then((res) => {
-			if (res.ok) {
-				router.push("/bounties");
-			}
 		})
-		.catch((err) => console.error(err));
+			.then((res) => {
+				if (res.ok) {
+					router.push("/bounties");
+				}
+			})
+			.catch((err) => console.error(err));
+
+		// Create the bounty on the blockchain
+		const address = walletConnector.getAddress()
+		const signer = walletConnector.getSigner()
+		createBounty("Test", 1719103320, 1719103329, 1000, signer, address);
 	}
 
 	return (
