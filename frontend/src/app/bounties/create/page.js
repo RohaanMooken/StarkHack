@@ -44,7 +44,7 @@ export default function CreateBountyPage() {
 
 	const router = useRouter();
 
-	const walletConnector = primaryWallet?.connector;
+	const walletConnector = primaryWallet?.connector
 
 	// Submit the bounty to the server
 	async function handleSubmit(e) {
@@ -82,10 +82,8 @@ export default function CreateBountyPage() {
 			})
 			.catch((err) => console.error(err));
 
-		// Create the bounty on the blockchain
-		const address = walletConnector.getAddress()
-		const signer = walletConnector.getSigner()
-		createBounty("Test", 1719103320, 1719103329, 1000, signer, address);
+		const account = await walletConnector.getSigner()
+		createBounty("Test", 1719103320, 1719103329, 1000, account);
 	}
 
 	return (

@@ -101,7 +101,7 @@ export async function submitReportReview() {
 }
 
 
-export async function createBounty(name, startDate, endDate, maxReward, signer, accountAddress) {
+export async function createBounty(name, startDate, endDate, maxReward, account) {
     try {
 		const { abi: testAbi } = await provider.getClassAt(
 			siteConfig.testAddress
@@ -116,9 +116,7 @@ export async function createBounty(name, startDate, endDate, maxReward, signer, 
 			siteConfig.testAddress,
 			provider
 		);
-
-        const account = new Account(provider, accountAddress, signer);
-
+		
         myTestContract.connect(account);
 
 		const bountyResponse = await myTestContract.create_bounty(name, startDate, endDate, maxReward);
