@@ -100,6 +100,10 @@ mod Bounty {
 
         // Get all addresses with XP
         fn get_all_xp(self: @TContractState) -> Array<(ContractAddress, u128)>;
+
+        // Get number of bounties
+        fn get_bounty_count(self: @TContractState) -> u64;
+
     }
 
     // Contract constructor
@@ -237,6 +241,11 @@ mod Bounty {
         // New function to get XP of an address
         fn get_xp(self: @ContractState, address: ContractAddress) -> u128 {
             self.user_xp.read(address)
+        }
+
+        // Get number of bounties
+        fn get_bounty_count(self: @ContractState) -> u64 {
+            self.bounty_count.read()
         }
 
         // New function to get all addresses with XP
