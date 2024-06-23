@@ -5,5 +5,5 @@ export const siteConfig = {
         github: "https://github.com/RohaanMooken/starkhack/"
     },
     nodeURL: "https://starknet-sepolia.infura.io/v3/2TNLTC4uOBshElAudRJL42F1xC1",
-    testAddress: "0x07a3b798f9ba55e603b97bf01bf6d2749037a92cdbde063af3e404979f1e3c85",
+    testAddress: "0x05b2be5492151d1dbe7883d0f910e23fa395a0a7332d9848e37703f909ad0a20",
 }

@@ -55,7 +55,10 @@ export default function CreateBountyPage() {
 			return;
 		}
 
-		const walletAddress = primaryWallet?.address;
+		const walletAddress = primaryWallet?.address;		
+
+		const account = await walletConnector.getSigner()
+		const bountyCount = createBounty("Test", 1719103320, 1719103329, 1000, account);
 
 		const res = await fetch(`${siteConfig.backendURL}/bounties/`, {
 			method: "POST",
@@ -63,6 +66,7 @@ export default function CreateBountyPage() {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
+				index: bountyCount,
 				owner_address: walletAddress,
 				name: name,
 				overview: editor1Content,
@@ -81,9 +85,6 @@ export default function CreateBountyPage() {
 				}
 			})
 			.catch((err) => console.error(err));
-
-		const account = await walletConnector.getSigner()
-		createBounty("Test", 1719103320, 1719103329, 1000, account);
 	}
 
 	return (
