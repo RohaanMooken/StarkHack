@@ -107,6 +107,8 @@ mod Bounty {
         // Get bug count
         fn get_bug_count(self: @TContractState) -> Array<(u64, u64)>;
 
+        // Get bug based on address
+        fn get_bug_add(self: @TContractState, user_address: ContractAddress) -> Array<BugInfo>;
     }
 
     // Contract constructor
@@ -206,6 +208,7 @@ mod Bounty {
                 0 => 10, // Low severity
                 1 => 25, // Medium severity
                 2 => 50, // High severity
+                3 => 100, // Critical severity
                 _ => 0,
             };
             bug_info.status = 1;
@@ -267,6 +270,43 @@ mod Bounty {
                 bounty_id += 1;
             };
             
+            result
+        }
+
+        // Get a spesific bug based on address
+        fn get_bug_add(self: @ContractState, user_address: ContractAddress) -> Array<BugInfo> {
+            let mut result: Array<BugInfo> = ArrayTrait::new();
+            let bounty_count = self.bounty_count.read();
+            let mut bounty_id: u64 = 0;
+    
+            // Iterate through all bounties
+            loop {
+                if bounty_id >= bounty_count {
+                    break;
+                }
+    
+                let bug_count = self.bug_count.read(bounty_id);
+                let mut bug_index: u64 = 0;
+    
+                // Iterate through all bugs in the current bounty
+                loop {
+                    if bug_index >= bug_count {
+                        break;
+                    }
+    
+                    let bug_info = self.bugs.read((bounty_id, bug_index));
+    
+                    // Check if the bug was submitted by the specified user
+                    if bug_info.hacker_address == user_address {
+                        result.append(bug_info);
+                    }
+    
+                    bug_index += 1;
+                };
+    
+                bounty_id += 1;
+            };
+    
             result
         }
 

@@ -104,6 +104,59 @@ export async function submitReport(bountyIndex, bugUUID, account) {
 	}
 }
 
+
+export async function approveBug(bountyIndex, bug_index, severity, account) {
+	try {
+		const { abi: testAbi } = await provider.getClassAt(
+			siteConfig.testAddress
+		);
+
+		if (!testAbi) {
+			throw new Error("ABI not found for the contract.");
+		}
+
+		const myTestContract = new Contract(
+			testAbi,
+			siteConfig.testAddress,
+			provider
+		);
+
+		myTestContract.connect(account);
+
+		const create = await myTestContract.approve_bug(bountyIndex, bug_index, severity);
+
+		return;
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+export async function denyBug(bountyIndex, bug_index, reason, account) {
+	try {
+		const { abi: testAbi } = await provider.getClassAt(
+			siteConfig.testAddress
+		);
+
+		if (!testAbi) {
+			throw new Error("ABI not found for the contract.");
+		}
+
+		const myTestContract = new Contract(
+			testAbi,
+			siteConfig.testAddress,
+			provider
+		);
+
+		myTestContract.connect(account);
+
+		const create = await myTestContract.approve_bug(bountyIndex, bug_index, reason);
+
+		return;
+	} catch (error) {
+		console.log(error);
+	}
+}
+
 export async function createBounty(
 	name,
 	startDate,
