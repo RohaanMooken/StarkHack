@@ -104,6 +104,9 @@ mod Bounty {
         // Get number of bounties
         fn get_bounty_count(self: @TContractState) -> u64;
 
+        // Get bug count
+        fn get_bug_count(self: @TContractState) -> Array<(u64, u64)>;
+
     }
 
     // Contract constructor
@@ -246,6 +249,25 @@ mod Bounty {
         // Get number of bounties
         fn get_bounty_count(self: @ContractState) -> u64 {
             self.bounty_count.read()
+        }
+        
+        // Get number of bugs
+        fn get_bug_count(self: @ContractState) -> Array<(u64, u64)> {
+            let mut result: Array<(u64, u64)> = ArrayTrait::new();
+            let bounty_count = self.bounty_count.read();
+            let mut bounty_id: u64 = 0;
+            
+            loop {
+                if bounty_id >= bounty_count {
+                    break;
+                }
+                
+                let bug_count = self.bug_count.read(bounty_id);
+                result.append((bounty_id, bug_count));
+                bounty_id += 1;
+            };
+            
+            result
         }
 
         // New function to get all addresses with XP
