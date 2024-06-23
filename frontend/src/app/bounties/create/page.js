@@ -9,11 +9,7 @@ import { useState } from "react";
 import { AssetsInScopeManager } from "@/components/assetsInScopeManager";
 import { siteConfig } from "@/config/site";
 import { Input } from "@/components/ui/input";
-import {
-	useDynamicContext,
-	useEmbeddedWallet,
-	getNetwork,
-} from "@dynamic-labs/sdk-react-core";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -25,7 +21,9 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
-import { createBounty } from "@/lib/smartContractFunctions";
+import { createBounty, getBountyCount } from "@/lib/smartContractFunctions";
+import { Calendar } from "@/components/ui/calendar";
+import { addDays } from "date-fns";
 
 export default function CreateBountyPage() {
 	const [editor1Content, setEditor1Content] = useState("");
@@ -39,12 +37,18 @@ export default function CreateBountyPage() {
 	const [categories, setCategories] = useState([]);
 	const [name, setName] = useState("");
 
+	const initialRange = {
+		from: new Date(),
+		to: new addDays(Date(), 4),
+	};
+	const [range, setRange] = useState(initialRange);
+
 	const [alertDialog, setAlertDialog] = useState(false);
 	const { setShowAuthFlow, primaryWallet } = useDynamicContext();
 
 	const router = useRouter();
 
-	const walletConnector = primaryWallet?.connector
+	const walletConnector = primaryWallet?.connector;
 
 	// Submit the bounty to the server
 	async function handleSubmit(e) {
@@ -55,10 +59,24 @@ export default function CreateBountyPage() {
 			return;
 		}
 
-		const walletAddress = primaryWallet?.address;		
+		let max_bounty = 0;
+		categories.forEach((category) => {
+			const maxCritical = Math.max(category.critical);
+			if (maxCritical > max_bounty) {
+				max_bounty = maxCritical;
+			}
+		});
 
-		const account = await walletConnector.getSigner()
-		const bountyCount = createBounty("Test", 1719103320, 1719103329, 1000, account);
+		const walletAddress = primaryWallet?.address;
+
+		const account = await walletConnector.getSigner();
+
+		let start_date = range.from.getUTCSeconds();
+		let end_date = range.from.getUTCSeconds();
+
+		await createBounty(name, start_date, end_date, max_bounty, account);
+
+		const bountyCount = await getBountyCount();
 
 		const res = await fetch(`${siteConfig.backendURL}/bounties/`, {
 			method: "POST",
@@ -66,7 +84,8 @@ export default function CreateBountyPage() {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				index: bountyCount,
+				max_bounty: max_bounty,
+				index: bountyCount.toString(),
 				owner_address: walletAddress,
 				name: name,
 				overview: editor1Content,
@@ -165,6 +184,14 @@ export default function CreateBountyPage() {
 				<h3>Out of Scope & Rules</h3>
 				<Editor setEditorContent={setEditor5Content} />
 			</div>
+			<Separator className="my-4 w-7/12" />
+			<Calendar
+				mode="range"
+				selected={range}
+				onSelect={setRange}
+				className="rounded-md border"
+			/>
+			<Separator className="my-4 w-7/12" />
 			<Button type="submit">Submit Bounty</Button>
 		</form>
 	);

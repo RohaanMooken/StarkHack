@@ -32,11 +32,6 @@ class BountiesView(APIView):
                 report.save()
             return Response({"message": "Report created"}, status=200)
         else:
-            m_bounty = 0
-            for category in data["rewards"]["categories"]:
-                if max(category["critical"]) > m_bounty:
-                    m_bounty = max(category["critical"])
-
             with transaction.atomic():
                 # Create Bounty object
                 bounty = Bounty(
@@ -44,7 +39,7 @@ class BountiesView(APIView):
                     owner_address=data["owner_address"],
                     name=data["name"],
                     vault_tvl=1337,
-                    max_bounty=m_bounty,
+                    max_bounty=data["max_bounty"],
                     total_paid=1337,
                     ################
                     vault_address="0x1337",

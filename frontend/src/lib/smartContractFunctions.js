@@ -72,14 +72,14 @@ export async function fetchBounties() {
 				break;
 			}
 		}
-        return tempBounties;
+		return tempBounties;
 	} catch (error) {
 		console.log(error);
 	}
 }
 
-export async function submitReportReview() {
-    try {
+export async function submitReport(bountyIndex, bugUUID, account) {
+	try {
 		const { abi: testAbi } = await provider.getClassAt(
 			siteConfig.testAddress
 		);
@@ -94,15 +94,24 @@ export async function submitReportReview() {
 			provider
 		);
 
-		
+		myTestContract.connect(account);
+
+		const create = await myTestContract.submit_bug(bountyIndex, bugUUID);
+
+		return;
 	} catch (error) {
 		console.log(error);
 	}
 }
 
-
-export async function createBounty(name, startDate, endDate, maxReward, account) {
-    try {
+export async function createBounty(
+	name,
+	startDate,
+	endDate,
+	maxReward,
+	account
+) {
+	try {
 		const { abi: testAbi } = await provider.getClassAt(
 			siteConfig.testAddress
 		);
@@ -116,14 +125,44 @@ export async function createBounty(name, startDate, endDate, maxReward, account)
 			siteConfig.testAddress,
 			provider
 		);
-		
-        myTestContract.connect(account);
 
-		const bountyResponse = await myTestContract.create_bounty(name, startDate, endDate, maxReward);
+		myTestContract.connect(account);
 
-        const bountyCount = await myTestContract.get_bounty_count();
+		const stake = await myTestContract.stake();
+		await provider.waitForTransaction(stake.transaction_hash);
 
-        return bountyCount;
+		const create = await myTestContract.create_bounty(
+			name,
+			startDate,
+			endDate,
+			maxReward
+		);
+
+		return;
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+export async function getBountyCount() {
+	try {
+		const { abi: testAbi } = await provider.getClassAt(
+			siteConfig.testAddress
+		);
+
+		if (!testAbi) {
+			throw new Error("ABI not found for the contract.");
+		}
+
+		const myTestContract = new Contract(
+			testAbi,
+			siteConfig.testAddress,
+			provider
+		);
+
+		const bountyCount = await myTestContract.get_bounty_count();
+
+		return bountyCount;
 	} catch (error) {
 		console.log(error);
 	}

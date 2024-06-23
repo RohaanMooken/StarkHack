@@ -25,7 +25,7 @@ class BountyReportInline(admin.TabularInline):
 class BountyAdmin(admin.ModelAdmin):
     exclude = ('last_updated',)
     fieldsets = [
-        ('Bounty Information', {'fields': ['name', 'vault_tvl', 'max_bounty', 'total_paid', 'owner_address']}),
+        ('Bounty Information', {'fields': ['name', 'vault_tvl', 'max_bounty', 'total_paid', 'owner_address', 'index']}),
         ('Program Overview', {'fields': ['vault_address', 'program_overview_html']}),
         ('Reward by Threat Level', {'fields': ['rewards_by_threat_level_html']}),
         ('Out of Scope', {'fields': ['out_of_scope_html']}),
