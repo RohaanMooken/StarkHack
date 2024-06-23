@@ -1,17 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Input } from "./ui/input";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-export function RewardsByThreatLevelManager({
-	setCriticalReward,
-	setHighReward,
-	setMediumReward,
-	setLowReward,
-}) {
+export function RewardsByThreatLevelManager({ categories, setCategories }) {
 	const [critical, setCritical] = useState("single");
 	const [high, setHigh] = useState("single");
 	const [medium, setMedium] = useState("single");
@@ -26,65 +22,83 @@ export function RewardsByThreatLevelManager({
 	const [lowStart, setLowStart] = useState(0);
 	const [lowEnd, setLowEnd] = useState(0);
 
+	const [categoryName, setCategoryName] = useState("");
+
 	function handleCriticalChange(param, value) {
 		if (param === "start") {
-			setCriticalStart(value);
+			setCriticalStart(parseFloat(value));
 		} else {
-			setCriticalEnd(value);
-		}
-
-		if (critical === "range") {
-			setCriticalReward([criticalStart, criticalEnd]);
-		} else {
-			setCriticalReward([criticalStart]);
+			setCriticalEnd(parseFloat(value));
 		}
 	}
 
 	function handleHighChange(param, value) {
 		if (param === "start") {
-			setHighStart(value);
+			setHighStart(parseFloat(value));
 		} else {
-			setHighEnd(value);
-		}
-
-		if (high === "range") {
-			setHighReward([highStart, highEnd]);
-		} else {
-			setHighReward([highStart]);
+			setHighEnd(parseFloat(value));
 		}
 	}
 
 	function handleMediumChange(param, value) {
 		if (param === "start") {
-			setMediumStart(value);
+			setMediumStart(parseFloat(value));
 		} else {
-			setMediumEnd(value);
-		}
-
-		if (medium === "range") {
-			setMediumReward([mediumStart, mediumEnd]);
-		} else {
-			setMediumReward([mediumStart]);
+			setMediumEnd(parseFloat(value));
 		}
 	}
 
 	function handleLowChange(param, value) {
 		if (param === "start") {
-			setLowStart(value);
+			setLowStart(parseFloat(value));
 		} else {
-			setLowEnd(value);
+			setLowEnd(parseFloat(value));
 		}
+	}
 
-		if (low === "range") {
-			setLowReward([lowStart, lowEnd]);
-		} else {
-			setLowReward([lowStart]);
-		}
+	function handleAddCategory() {
+		const criticalReward =
+			critical === "range"
+				? [criticalStart, criticalEnd]
+				: [criticalStart];
+		const highReward =
+			high === "range" ? [highStart, highEnd] : [highStart];
+		const mediumReward =
+			medium === "range" ? [mediumStart, mediumEnd] : [mediumStart];
+		const lowReward = low === "range" ? [lowStart, lowEnd] : [lowStart];
+
+		setCategories([
+			...categories,
+			{
+				name: categoryName,
+				critical: criticalReward,
+				high: highReward,
+				medium: mediumReward,
+				low: lowReward,
+			},
+		]);
+	}
+
+	function handleDeleteCategory(index) {
+		setCategories(categories.filter((_, i) => i !== index));
 	}
 
 	return (
 		<Card className="w-6/12 p-2">
 			<CardContent className="flex flex-col items-center space-y-12">
+				<div className="flex flex-row items-center justify-evenly w-6/12">
+					<Input
+						placeholder="Category Name"
+						value={categoryName}
+						onChange={(e) => {
+							e.preventDefault();
+							setCategoryName(e.target.value);
+						}}
+					/>
+					<Button type="button" onClick={handleAddCategory}>
+						Add Category
+					</Button>
+				</div>
 				<div className="flex flex-row items-center justify-evenly w-6/12 space-x-8">
 					<Label>Critical</Label>
 					<RadioGroup
@@ -273,6 +287,26 @@ export function RewardsByThreatLevelManager({
 					)}
 				</div>
 			</CardContent>
+			<CardFooter>
+				{categories.map((category, index) => (
+					<div
+						key={index}
+						className="flex flex-col items-center space-x-2 border"
+					>
+						<Label className="font-bold">{category.name}</Label>
+						<Label>Critical: {category.critical.join(" - ")}</Label>
+						<Label>High: {category.high.join(" - ")}</Label>
+						<Label>Medium: {category.medium.join(" - ")}</Label>
+						<Label>Low: {category.low.join(" - ")}</Label>
+						<Button
+							variant="destructive"
+							onClick={() => handleDeleteCategory(index)}
+						>
+							Delete
+						</Button>
+					</div>
+				))}
+			</CardFooter>
 		</Card>
 	);
 }
