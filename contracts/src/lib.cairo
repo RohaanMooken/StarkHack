@@ -206,6 +206,7 @@ mod Bounty {
                 0 => 10, // Low severity
                 1 => 25, // Medium severity
                 2 => 50, // High severity
+                3 => 100, // Critical severity
                 _ => 0,
             };
             bug_info.status = 1;
