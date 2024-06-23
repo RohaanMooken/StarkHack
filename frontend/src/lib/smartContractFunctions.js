@@ -149,7 +149,7 @@ export async function denyBug(bountyIndex, bug_index, reason, account) {
 
 		myTestContract.connect(account);
 
-		const create = await myTestContract.approve_bug(bountyIndex, bug_index, reason);
+		const create = await myTestContract.deny_bug(bountyIndex, bug_index, reason);
 
 		return;
 	} catch (error) {
