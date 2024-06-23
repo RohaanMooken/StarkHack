@@ -96,7 +96,7 @@ export async function submitReport(bountyIndex, bugUUID, account) {
 
 		myTestContract.connect(account);
 
-		const create = await myTestContract.submit_bug(bountyIndex, bugUUID);
+		const create = await myTestContract.submit_bug(bountyIndex, "0x" + bugUUID);
 
 		return;
 	} catch (error) {

@@ -18,6 +18,7 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
+import { submitReport } from "@/lib/smartContractFunctions";
 
 export default function SubmitBountyPage({ params }) {
 	const [isLoading, setIsLoading] = useState(true);
@@ -28,6 +29,7 @@ export default function SubmitBountyPage({ params }) {
 
 	const [alertDialog, setAlertDialog] = useState(false);
 	const { setShowAuthFlow, primaryWallet } = useDynamicContext();
+	const walletConnector = primaryWallet?.connector;
 
 	const router = useRouter();
 	useEffect(() => {
@@ -66,12 +68,17 @@ export default function SubmitBountyPage({ params }) {
 				body: formData,
 			}
 		)
-			.then((res) => {
-				if (res.ok) {
-					router.push("/bounties");
-				}
+			.then(async (response) => {
+				// Use async here to allow await inside
+				const jsonData = await response.json(); // Wait for the JSON data
+				return jsonData; // Return the JSON data so the next .then() receives it
 			})
 			.catch((err) => console.error(err));
+
+		const account = await walletConnector.getSigner();
+
+		await submitReport(res.bounty_index, res.report_uuid, account);
+		router.push("/bounties");
 	}
 
 	return isLoading ? (

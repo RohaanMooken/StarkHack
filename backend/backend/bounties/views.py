@@ -10,7 +10,7 @@ from .models import (
     BountyReport,
 )
 from django.forms.models import model_to_dict
-from .serializer import BountySerializer
+from .serializer import BountySerializer, BountyReportSerializer
 from django.http import Http404, FileResponse
 
 
@@ -30,7 +30,7 @@ class BountiesView(APIView):
                     owner_address=data["owner_address"],
                 )
                 report.save()
-            return Response({"message": "Report created"}, status=200)
+                return Response({"report_uuid": report.id.hex[:8], "bounty_index": bounty.index})
         else:
             with transaction.atomic():
                 # Create Bounty object

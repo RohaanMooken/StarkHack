@@ -38,7 +38,7 @@ class BountyRewardCategorySerializer(serializers.ModelSerializer):
 class BountyReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = BountyReport
-        fields = ['short_description', 'owner_address', 'pdf']
+        fields = ['id', 'short_description', 'owner_address', 'pdf']
 
 
 class BountySerializer(serializers.ModelSerializer):
