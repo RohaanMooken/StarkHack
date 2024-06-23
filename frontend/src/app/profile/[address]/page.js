@@ -298,7 +298,7 @@ export default function ProfilePage({ params }) {
 																}
 																className={buttonVariants()}
 															>
-																Download {console.log(report)}
+																Download
 															</Button>
 															<ApproveDeny
 																reportID={
