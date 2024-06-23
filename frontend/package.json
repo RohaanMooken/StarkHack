@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@dynamic-labs/ethereum": "^2.2.3",
+    "@dynamic-labs/iconic": "^2.2.4",
     "@dynamic-labs/sdk-api": "^0.0.474",
     "@dynamic-labs/sdk-react-core": "^2.2.3",
     "@dynamic-labs/starknet": "^2.2.3",
