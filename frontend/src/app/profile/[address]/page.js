@@ -22,6 +22,7 @@ import {
 	getReports,
 	getReportsFromAddress,
 } from "@/lib/smartContractFunctions";
+import ApproveDeny from "@/components/approveDeny";
 
 export default function ProfilePage({ params }) {
 	const cardData = [
@@ -297,19 +298,19 @@ export default function ProfilePage({ params }) {
 																}
 																className={buttonVariants()}
 															>
-																Download
+																Download {console.log(report)}
 															</Button>
-															<a
-																href="#"
-																className={buttonVariants(
-																	{
-																		variant:
-																			"secondary",
-																	}
-																)}
-															>
-																Pay
-															</a>
+															<ApproveDeny
+																reportID={
+																	report.id
+																}
+																bountyIndex={
+																	bounty.index
+																}
+																bugIndex={
+																	report.index
+																}
+															/>
 														</CardContent>
 													</Card>
 												)
@@ -368,9 +369,9 @@ export default function ProfilePage({ params }) {
 											<span className="font-bold">
 												Status:{" "}
 											</span>{" "}
-											{report.status === 0
+											{Number(report.status) === 0
 												? "pending"
-												: report.status === 1
+												: Number(report.status) === 1
 												? "approved"
 												: "denied"}
 										</div>
@@ -378,11 +379,11 @@ export default function ProfilePage({ params }) {
 											<span className="font-bold">
 												Severity:
 											</span>{" "}
-											{report.severity === 0
+											{Number(report.severity) === 0
 												? "Low"
-												: report.severity === 1
+												: Number(report.severity) === 1
 												? "Medium"
-												: report.severity === 2
+												: Number(report.severity) === 2
 												? "High"
 												: "Critical"}
 										</div>

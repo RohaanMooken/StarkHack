@@ -22,12 +22,14 @@ class BountiesView(APIView):
         bounty_id = request.query_params.get("id")
         if bounty_id:
             with transaction.atomic():
+                print(data["index"])
                 bounty = Bounty.objects.get(id=bounty_id)
                 report = BountyReport(
                     bounty=bounty,
                     short_description=data["short_description"],
                     pdf=data["pdf"],
                     owner_address=data["owner_address"],
+                    index=data["index"],
                 )
                 report.save()
                 return Response({"report_uuid": report.id.hex[:8], "bounty_index": bounty.index})
@@ -184,6 +186,7 @@ class BountyReportView(APIView):
                         "short_description": report.short_description,
                         "uuid": report.id.hex[:8],
                         "bounty_index": report.bounty.index,
+                        "index": report.index,
                     }
                 )
         except BountyReport.DoesNotExist:

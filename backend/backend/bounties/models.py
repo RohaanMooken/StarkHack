@@ -98,6 +98,7 @@ class BountyReport(models.Model):
     short_description = models.TextField(default='')
     owner_address = models.CharField(max_length=100, default='')
     pdf = models.FileField(upload_to=bounty_report_path)
+    index = models.IntegerField(default=0)
 
     def __str__(self):
         return self.owner_address

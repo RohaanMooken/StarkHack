@@ -18,7 +18,7 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
-import { submitReport } from "@/lib/smartContractFunctions";
+import { getReportCount, submitReport } from "@/lib/smartContractFunctions";
 
 export default function SubmitBountyPage({ params }) {
 	const [isLoading, setIsLoading] = useState(true);
@@ -55,11 +55,17 @@ export default function SubmitBountyPage({ params }) {
 		}
 
 		const walletAddress = primaryWallet?.address;
+		const reportCount = await getReportCount();
+		console.log(typeof data.index);
+		console.log(parseInt(data.index, 10));
+		console.log(reportCount[data.index][1]);
+		console.log(parseInt(reportCount[data.index][1], 10));
 
 		const formData = new FormData();
 		formData.append("short_description", editorContent);
 		formData.append("pdf", pdf);
 		formData.append("owner_address", walletAddress);
+		formData.append("index", parseInt(reportCount[data.index][1], 10));
 
 		const res = await fetch(
 			`${siteConfig.backendURL}/bounties/?id=${params.id}`,
