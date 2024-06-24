@@ -1,6 +1,6 @@
 export const siteConfig = {
     name: "starkhack",
-    backendURL: "http://localhost:8000",
+    backendURL: "http://starkhack-backend.vercel.app",
     links: {
         github: "https://github.com/RohaanMooken/starkhack/"
     },
