@@ -27,7 +27,7 @@ export default function Leaderboard() {
 
 	async function fetchBounties() {
 		try {
-			const { abi: testAbi } = await provider.getClassAt(testAddress);
+			const { abi: testAbi } = await provider.getClassAt(siteConfig.testAddress);
 			if (!testAbi) {
 				throw new Error("ABI not found for the contract.");
 			}
